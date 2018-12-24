@@ -116,7 +116,7 @@ class ssbu:
 def sign(fName):
 	with open(fName, "rb+") as f:
 		ssb = ssbu(f)
-		DBName = "db_"+fName
+		DBName = fName+"_db"
 		my_file = Path(DBName)
 		if my_file.is_file():
 			print("updateing DataBlock")
@@ -125,13 +125,10 @@ def sign(fName):
 		else:
 			ssb.dataBlockToFile(DBName)
 
-		#ssb.setLevel(ssb.calXP(45))
-
 		for cc in ssb.ds1:
 			if not "un" in cc:
 				print(cc, ssb.ds1[cc])
-		
-		#print()
+				
 		ssb.sign()
 
  

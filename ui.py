@@ -7,6 +7,8 @@ from tkinter import Menu
 from amiibo_class import ssbu
 from subprocess import call
 import subprocess
+from pathlib import Path
+
 file = None
 ssb = None
 def OpenCmd():
@@ -20,8 +22,10 @@ def handaleFile():
 	global ssb,menu
 	if(file):
 		new_item.entryconfig(1,state=NORMAL)
-		new_item.entryconfig(3,state=NORMAL)
-		menu.entryconfig("Data", state="normal")
+		
+		if(key_file):
+			new_item.entryconfig(3,state=NORMAL)
+			menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
 		handaleSSB()
 
@@ -107,6 +111,7 @@ def InportDB():
 	handaleSSB()
 
 window = Tk()
+key_file = Path("./retail.bin").is_file()
 
 chk_state_learn = BooleanVar() 
 chk_state_learn.set(False)
@@ -122,22 +127,23 @@ new_item.add_command(label='Open',command=OpenCmd)
  
 sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
-new_item.add_separator()
 
-enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
-drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
+if(key_file):
+	enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
+	drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
+	new_item.add_separator()
+	block_item = Menu(menu, tearoff=0)
+	block_item.add_command(label='Export DataBlock',command=ExportDB)
+	block_item.add_command(label='Import DataBlock',command=InportDB)
+	
 
-new_item.add_separator()
-
+new_item.add_separator()	
 new_item.add_command(label='Exit',command=QuitCmd)
- 
+
+
 menu.add_cascade(label='File', menu=new_item)
-
-block_item = Menu(menu, tearoff=0)
-block_item.add_command(label='Export DataBlock',command=ExportDB)
-block_item.add_command(label='Import DataBlock',command=InportDB)
-menu.add_cascade(label='Data', menu=block_item , state='disabled')
-
+if(key_file):
+	menu.add_cascade(label='Data', menu=block_item , state='disabled')
 window.config(menu=menu)
 
 
