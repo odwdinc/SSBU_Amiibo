@@ -129,9 +129,9 @@ sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
 
 if(key_file):
+	new_item.add_separator()
 	enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 	drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
-	new_item.add_separator()
 	block_item = Menu(menu, tearoff=0)
 	block_item.add_command(label='Export DataBlock',command=ExportDB)
 	block_item.add_command(label='Import DataBlock',command=InportDB)
