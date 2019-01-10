@@ -5,10 +5,13 @@ you will need to porvide your own Amiibo Keys in retail.key for Encription and D
 
 Need python3 and tkinter for the Ui,
 
-you will need to compile amiitool. 
-  you probley just need build-essential
+Need to compile amiitool. 
+  Probley just need build-essential.
+  
     sudo apt update
+    
     sudo apt install build-essential
+    
   run setup.sh to build and install, this shoud install amiitool to /usr/local/bin/amiitool.
   conferm by running 'which amiitool'
   
