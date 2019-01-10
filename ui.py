@@ -140,7 +140,7 @@ def Encrypt():
 		SaveCmd()
 		curentfile = file.name
 		file.close()
-		print(call("./amiitool -e -k ./retail.key -o "+fName +" -i "+curentfile,stderr=subprocess.STDOUT, shell=True))
+		print(call("amiitool -e -k ./retail.key -o "+fName +" -i "+curentfile,stderr=subprocess.STDOUT, shell=True))
 		file = open(curentfile, "rb+")
 		handaleFile()
 
@@ -148,7 +148,7 @@ def Decrypt():
 	global file
 	fName = filedialog.askopenfilename(filetypes = (("Amiibo","*.bin"),("Amiibo","*.bin")))
 	if fName:
-		print(call("./amiitool -d -k ./retail.key -i "+fName +" -o "+fName+"d",stderr=subprocess.STDOUT, shell=True))
+		print(call("amiitool -d -k ./retail.key -i "+fName +" -o "+fName+"d",stderr=subprocess.STDOUT, shell=True))
 		file = open(fName+"d", "rb+")
 		handaleFile()
 
@@ -231,7 +231,7 @@ def Entry_Change(this_move):
 
 window = Tk()
 key_file = Path("./retail.key").is_file()
-
+needed_tool = Path("/usr/local/bin/amiitool").is_file()
 chk_state_learn = BooleanVar() 
 chk_state_learn.set(False)
  
@@ -247,7 +247,8 @@ new_item.add_command(label='Open',command=OpenCmd)
 sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
 
-if(key_file):
+if(key_file and needed_tool):
+
 	new_item.add_separator()
 	enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 	drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
