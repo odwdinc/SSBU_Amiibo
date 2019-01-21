@@ -10,13 +10,40 @@ from amiibo_class import ssbu
 from amiibo_class import MoveCodeList
 from amiibo_class import Skill_Set
 
-from subprocess import call
-import subprocess
+sys.path.insert(0, './pyamiibo')
+
+from amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
 file = None
 ssb = None
 
+def amiitools_to_dump(internal):
+    """Convert a 3DS/amiitools internal dump to the standard Amiibo/NTAG215
+    dump format."""
+    dump = bytearray(internal)
+    dump[0x008:0x010] = internal[0x000:0x008]
+    dump[0x080:0x0A0] = internal[0x008:0x028]
+    dump[0x010:0x034] = internal[0x028:0x04C]
+    dump[0x0A0:0x208] = internal[0x04C:0x1B4]
+    dump[0x034:0x054] = internal[0x1B4:0x1D4]
+    dump[0x000:0x008] = internal[0x1D4:0x1DC]
+    dump[0x054:0x080] = internal[0x1DC:0x208]
+    return dump
+
+def dump_to_amiitools(dump):
+    """Convert a standard Amiibo/NTAG215 dump to the 3DS/amiitools internal
+    format.
+    """
+    internal = bytearray(dump)
+    internal[0x000:0x008] = dump[0x008:0x010]
+    internal[0x008:0x028] = dump[0x080:0x0A0]
+    internal[0x028:0x04C] = dump[0x010:0x034]
+    internal[0x04C:0x1B4] = dump[0x0A0:0x208]
+    internal[0x1B4:0x1D4] = dump[0x034:0x054]
+    internal[0x1D4:0x1DC] = dump[0x000:0x008]
+    internal[0x1DC:0x208] = dump[0x054:0x080]
+    return internal
 
 MoveNames = list(MoveCodeList.keys())
 
@@ -140,7 +167,16 @@ def Encrypt():
 		SaveCmd()
 		curentfile = file.name
 		file.close()
-		print(call("amiitool -e -k ./retail.key -o "+fName +" -i "+curentfile,stderr=subprocess.STDOUT, shell=True))
+
+		with open(curentfile, 'rb') as fp:
+			data = fp.read()
+		data = amiitools_to_dump(data)
+		dump = AmiiboDump(master_keys, data, is_locked=False)
+		dump.lock()
+		dump.unset_lock_bytes()
+		with open(fName, 'wb') as fp:
+			fp.write(dump.data)
+
 		file = open(curentfile, "rb+")
 		handaleFile()
 
@@ -148,7 +184,13 @@ def Decrypt():
 	global file
 	fName = filedialog.askopenfilename(filetypes = (("Amiibo","*.bin"),("Amiibo","*.bin")))
 	if fName:
-		print(call("amiitool -d -k ./retail.key -i "+fName +" -o "+fName+"d",stderr=subprocess.STDOUT, shell=True))
+		with open(fName, 'rb') as fp:
+			dump = AmiiboDump(master_keys, fp.read(), is_locked=True)
+		dump.unlock()
+		data = dump.data
+		data = dump_to_amiitools(data)
+		with open(fName+"d", 'wb') as fp:
+			fp.write(data)
 		file = open(fName+"d", "rb+")
 		handaleFile()
 
@@ -231,7 +273,7 @@ def Entry_Change(this_move):
 
 window = Tk()
 key_file = Path("./retail.key").is_file()
-needed_tool = Path("/usr/local/bin/amiitool").is_file()
+
 chk_state_learn = BooleanVar() 
 chk_state_learn.set(False)
  
@@ -246,15 +288,19 @@ new_item.add_command(label='Open',command=OpenCmd)
  
 sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
+if (key_file):
+	with open('./retail.key', 'rb') as fp_d:
+		master_keys = AmiiboMasterKey.from_combined_bin(fp_d.read())
 
-if(key_file and needed_tool):
-
+if(key_file):
 	new_item.add_separator()
 	enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 	drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
 	block_item = Menu(menu, tearoff=0)
 	block_item.add_command(label='Export DataBlock',command=ExportDB)
 	block_item.add_command(label='Import DataBlock',command=InportDB)
+	
+
 	
 
 new_item.add_separator()	
