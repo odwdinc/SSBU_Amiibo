@@ -136,20 +136,31 @@ def handaleSSB():
 def SaveCmd():
 	global ssb
 	ssb.setLearn(chk_state_learn.get())
-
-	ssb.setMove1(MoveNames.index(Moves['Move 1']['Combobox'].get()))
+	move1 = Moves['Move 1']['Combobox'].get()
+	if move1 is '':
+		move1 = 'No_Move'
+	ssb.setMove1(MoveNames.index(move1))
 	if MoveCodeList[Moves['Move 1']['Combobox'].get()] == 2:
 		ssb.setMove2(0)
-		ssb.setMove3(MoveNames.index(Moves['Move 3']['Combobox'].get()))
+		move3 = Moves['Move 3']['Combobox'].get()
+		if move3 is '':
+			move3 = 'No_Move'
+		ssb.setMove3(MoveNames.index(move3))
 	elif MoveCodeList[Moves['Move 1']['Combobox'].get()] == 3:
 		ssb.setMove2(0)
 		ssb.setMove3(0)
 	else:
-		ssb.setMove2(MoveNames.index(Moves['Move 2']['Combobox'].get()))
+		move2 = Moves['Move 2']['Combobox'].get()
+		if move2 is '':
+			move2 = 'No_Move'
+		ssb.setMove2(MoveNames.index(move2))
 		if MoveCodeList[Moves['Move 1']['Combobox'].get()] == 2:
 			ssb.setMove3(0)
 		else:
-			ssb.setMove3(MoveNames.index(Moves['Move 3']['Combobox'].get()))
+			move3 = Moves['Move 3']['Combobox'].get()
+			if move3 is '':
+				move3 = 'No_Move' 
+			ssb.setMove3(MoveNames.index(move3))
 
 	ssb.setLevel(int(txt_XP.get()))
 	ssb.setAttack(int(txt_ATC.get()))
