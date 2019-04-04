@@ -15,6 +15,8 @@ sys.path.insert(0, './pyamiibo')
 from amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
+from hex import HexWindow
+
 file = None
 ssb = None
 
@@ -212,9 +214,16 @@ def QuitCmd():
 
 
 def ExportDB():
-	DBName = filedialog.asksaveasfilename(filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
+	DBName = filedialog.asksaveasfilename(defaultextension=".bind_db",filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
+
 	if DBName:
 		ssb.dataBlockToFile(DBName)
+		HexWin = HexWindow(window,DBName,ExitHex)
+
+def ExitHex(DBName):
+	ssb.dataBlockFromeFile(DBName)
+	ssb.unpackData()
+	handaleSSB()
 
 
 def InportDB():
@@ -283,6 +292,7 @@ def Entry_Change(this_move):
 	return True
 
 window = Tk()
+
 key_file = Path("./retail.key").is_file()
 
 chk_state_learn = BooleanVar() 

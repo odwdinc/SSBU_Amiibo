@@ -78,6 +78,8 @@ class ssbu:
 	def setGift(self,Gift):
 		self.ds1['gift'] = Gift
 
+	
+
 	def unpackData(self):
 		self.ds1 = self.ds._asdict(self.ds._make(struct.unpack_from(self.DataPatern, self.data, self.DataOffset)))
 	
@@ -96,6 +98,7 @@ class ssbu:
 			else:
 				c +=1
 		print(s)
+
 	def dataBlockToFile(self,fName):
 		with open(fName, "wb") as fdb:
 			fdb.write(self.data)
