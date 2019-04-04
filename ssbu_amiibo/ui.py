@@ -290,6 +290,7 @@ def Entry_Change(this_move):
 		this_move['Combobox'].set(name)
 	return True
 def maine():
+	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file
 	window = Tk()
 
 	key_file = Path("./retail.key").is_file()
