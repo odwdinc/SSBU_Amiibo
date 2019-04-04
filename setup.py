@@ -26,6 +26,11 @@ setup(
     keywords=[
         '',
     ],
+
+    install_requires=[
+      'pyamiibo @ git+ssh://git@github.com/odwdinc/pyamiibo@master'
+      'cryptography'
+    ],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -45,6 +50,7 @@ setup(
     entry_points={
         'gui_scripts': [
             'pyhex = ssbu_amiibo.hex:maine',
+            'ssbu_amiibo = ssbu_amiibo.ui:maine'
         ],
     },
 )

@@ -6,16 +6,15 @@ from tkinter import scrolledtext
 from tkinter import Menu
 from tkinter import ttk
 
-from amiibo_class import ssbu
-from amiibo_class import MoveCodeList
-from amiibo_class import Skill_Set
+from ssbu_amiibo.amiibo_class import ssbu
+from ssbu_amiibo.amiibo_class import MoveCodeList
+from ssbu_amiibo.amiibo_class import Skill_Set
 
-sys.path.insert(0, './pyamiibo')
 
 from amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
-from hex import HexWindow
+from ssbu_amiibo.hex import HexWindow
 
 file = None
 ssb = None
@@ -290,108 +289,111 @@ def Entry_Change(this_move):
 			this_move['Dec_Label'].set('???')
 		this_move['Combobox'].set(name)
 	return True
+def maine():
+	window = Tk()
 
-window = Tk()
+	key_file = Path("./retail.key").is_file()
 
-key_file = Path("./retail.key").is_file()
+	chk_state_learn = BooleanVar() 
+	chk_state_learn.set(False)
+	 
+	window.title("SSBU Amiibo editor")
+	window.geometry('1040x280')
 
-chk_state_learn = BooleanVar() 
-chk_state_learn.set(False)
- 
-window.title("SSBU Amiibo editor")
-window.geometry('1040x280')
+	menu = Menu(window)
+	 
+	new_item = Menu(menu, tearoff=0)
+	 
+	new_item.add_command(label='Open',command=OpenCmd)
+	 
+	sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
-menu = Menu(window)
- 
-new_item = Menu(menu, tearoff=0)
- 
-new_item.add_command(label='Open',command=OpenCmd)
- 
-sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
+	if (key_file):
+		with open('./retail.key', 'rb') as fp_d:
+			master_keys = AmiiboMasterKey.from_combined_bin(fp_d.read())
 
-if (key_file):
-	with open('./retail.key', 'rb') as fp_d:
-		master_keys = AmiiboMasterKey.from_combined_bin(fp_d.read())
+	if(key_file):
+		new_item.add_separator()
+		enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
+		drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
+		block_item = Menu(menu, tearoff=0)
+		block_item.add_command(label='Export DataBlock',command=ExportDB)
+		block_item.add_command(label='Import DataBlock',command=InportDB)
+		
 
-if(key_file):
-	new_item.add_separator()
-	enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
-	drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
-	block_item = Menu(menu, tearoff=0)
-	block_item.add_command(label='Export DataBlock',command=ExportDB)
-	block_item.add_command(label='Import DataBlock',command=InportDB)
+		
+
+	new_item.add_separator()	
+	new_item.add_command(label='Exit',command=QuitCmd)
+
+
+	menu.add_cascade(label='File', menu=new_item)
+	if(key_file):
+		menu.add_cascade(label='Data', menu=block_item , state='disabled')
+	window.config(menu=menu)
+	window.bind("<Key>", key)
+
+	chk_learn = Checkbutton(window, text='Learning On/Off', var=chk_state_learn)
+	chk_learn.grid(column=0, row=0)
+
+	Moves={'Move 1':{'Combobox':StringVar(menu),
+					'Entry':StringVar(menu),
+					'Dec_Label':StringVar(menu),
+					'Combobox_Change': Combobox_Change_1,
+					'Entry_Change': Entry_Change_1
+					},
+			'Move 2':{'Combobox':StringVar(menu),
+					'Entry':StringVar(menu),
+					'Dec_Label':StringVar(menu),
+					'Combobox_Change': Combobox_Change_2,
+					'Entry_Change': Entry_Change_2
+					},
+			'Move 3':{'Combobox':StringVar(menu),
+					'Entry':StringVar(menu),
+					'Dec_Label':StringVar(menu),
+					'Combobox_Change': Combobox_Change_3,
+					'Entry_Change': Entry_Change_3
+					},
+	}
+	move_row = 1
+	for move in Moves:
+		lbl = Label(window, text=move+": ")
+		lbl.grid(row=move_row, column=0)
+
+		popup = ttk.Combobox(window, textvariable=Moves[move]['Combobox'], values=MoveList)
+		popup.grid(row = move_row, column =1)
+		popup.bind("<<ComboboxSelected>>", Moves[move]['Combobox_Change'])
+
+		ent = Entry(window,width=10, textvariable=Moves[move]['Entry'], validate="focusout", validatecommand=Moves[move]['Entry_Change'])
+		ent.grid(row=move_row,column=2)
+		
+		lbl_dec = Label(window,  textvariable=Moves[move]['Dec_Label'])
+		lbl_dec.grid(row=move_row,column=3)
+		move_row +=1
+
+	lbl_XP = Label(window, text="XP: ")
+	lbl_XP.grid(column=0, row=4)
+	txt_XP = Entry(window,width=15)
+	txt_XP.grid(column=1, row=4)
+
+	lbl_ATC = Label(window, text="Attack: ")
+	lbl_ATC.grid(column=0, row=5)
+	txt_ATC = Entry(window,width=10)
+	txt_ATC.grid(column=1, row=5)
+
+
+	lbl_HP = Label(window, text="Defense: ")
+	lbl_HP.grid(column=0, row=6)
+	txt_HP = Entry(window,width=10)
+	txt_HP.grid(column=1, row=6)
+
+
+	lbl_Gift = Label(window, text="Gift: ")
+	lbl_Gift.grid(column=0, row=7)
+	txt_Gift = Entry(window,width=10)
+	txt_Gift.grid(column=1, row=7)
+	 
+	window.mainloop()
 	
-
-	
-
-new_item.add_separator()	
-new_item.add_command(label='Exit',command=QuitCmd)
-
-
-menu.add_cascade(label='File', menu=new_item)
-if(key_file):
-	menu.add_cascade(label='Data', menu=block_item , state='disabled')
-window.config(menu=menu)
-window.bind("<Key>", key)
-
-chk_learn = Checkbutton(window, text='Learning On/Off', var=chk_state_learn)
-chk_learn.grid(column=0, row=0)
-
-Moves={'Move 1':{'Combobox':StringVar(menu),
-				'Entry':StringVar(menu),
-				'Dec_Label':StringVar(menu),
-				'Combobox_Change': Combobox_Change_1,
-				'Entry_Change': Entry_Change_1
-				},
-		'Move 2':{'Combobox':StringVar(menu),
-				'Entry':StringVar(menu),
-				'Dec_Label':StringVar(menu),
-				'Combobox_Change': Combobox_Change_2,
-				'Entry_Change': Entry_Change_2
-				},
-		'Move 3':{'Combobox':StringVar(menu),
-				'Entry':StringVar(menu),
-				'Dec_Label':StringVar(menu),
-				'Combobox_Change': Combobox_Change_3,
-				'Entry_Change': Entry_Change_3
-				},
-}
-move_row = 1
-for move in Moves:
-	lbl = Label(window, text=move+": ")
-	lbl.grid(row=move_row, column=0)
-
-	popup = ttk.Combobox(window, textvariable=Moves[move]['Combobox'], values=MoveList)
-	popup.grid(row = move_row, column =1)
-	popup.bind("<<ComboboxSelected>>", Moves[move]['Combobox_Change'])
-
-	ent = Entry(window,width=10, textvariable=Moves[move]['Entry'], validate="focusout", validatecommand=Moves[move]['Entry_Change'])
-	ent.grid(row=move_row,column=2)
-	
-	lbl_dec = Label(window,  textvariable=Moves[move]['Dec_Label'])
-	lbl_dec.grid(row=move_row,column=3)
-	move_row +=1
-
-lbl_XP = Label(window, text="XP: ")
-lbl_XP.grid(column=0, row=4)
-txt_XP = Entry(window,width=15)
-txt_XP.grid(column=1, row=4)
-
-lbl_ATC = Label(window, text="Attack: ")
-lbl_ATC.grid(column=0, row=5)
-txt_ATC = Entry(window,width=10)
-txt_ATC.grid(column=1, row=5)
-
-
-lbl_HP = Label(window, text="Defense: ")
-lbl_HP.grid(column=0, row=6)
-txt_HP = Entry(window,width=10)
-txt_HP.grid(column=1, row=6)
-
-
-lbl_Gift = Label(window, text="Gift: ")
-lbl_Gift.grid(column=0, row=7)
-txt_Gift = Entry(window,width=10)
-txt_Gift.grid(column=1, row=7)
- 
-window.mainloop()
+if __name__ == '__main__':
+    maine()
