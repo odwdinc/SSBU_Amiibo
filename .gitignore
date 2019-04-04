@@ -1,3 +1,4 @@
 
 retail.key
 *.pyc
+*.egg-info/

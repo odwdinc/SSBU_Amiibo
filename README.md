@@ -14,7 +14,7 @@ Just run python ui.py to start
 You can allso pass your Decripted Amiibo to amiibo_class.py for re-signing the data block.
 
 
-# Windows install Guid 
+# Windows install Guide
 
 ## Get python 3.6 [Link](https://www.python.org/downloads/)
 ![Get Python](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/Install_Python.PNG)
@@ -125,4 +125,29 @@ You can allso pass your Decripted Amiibo to amiibo_class.py for re-signing the d
 ![Run Code](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/RunCode_5.PNG) 
 
 
+# Install with pip
 
+Install globally (requires root)
+
+```console
+sudo python3 -m pip install git+https://github.com/odwdinc/SSBU_Amiibo.git
+```
+
+Or install to your users home directory (no root required).
+
+```console
+python3 -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
+```
+
+Add the bin directory for python local installs to your PATH in your `~/.bashrc`
+file.
+
+```console
+export PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin"
+```
+
+## Hex editor usage if installed with pip
+
+```console
+pyhex
+```

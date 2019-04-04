@@ -107,12 +107,12 @@ class HexWindow:
 		x =  int(x)
 		y = int(y)
 
-		if(event.keycode == 39):
+		if(event.keysym == 'Right'):
 			y = y+(2-y%3)
 			outstr =  "{}.{}".format(x,y).strip()
 			#print(pos,outstr)
 			self.viewText.mark_set("insert",outstr)
-		elif(event.keycode == 37):		
+		elif(event.keysym == 'Left'):
 			y = y-(y-1)%3
 			outstr =  "{}.{}".format(x,y).strip()
 			#print(pos,outstr)
@@ -132,7 +132,7 @@ class HexWindow:
 			self.resetLines()
 			self.viewText.mark_set("insert",endPos)
 			return "break"
-		elif (event.keycode == 38) or (event.keycode == 40):
+		elif (event.keysym == 'Up') or (event.keysym == 'Down'):
 			pass
 		else:
 			print(event)
@@ -202,4 +202,5 @@ def maine():
 	app.resizable(width=False, height=False)
 	app.mainloop()
 
-#maine()
+if __name__ == '__main__':
+    maine()
