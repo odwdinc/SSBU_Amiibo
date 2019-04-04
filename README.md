@@ -3,16 +3,6 @@ Just a start for the Amiibo editor
 
 you will need to porvide your own Amiibo Keys in retail.key for Encription and Decription to work
 
-Need python3, cryptography, and tkinter
-
-ModuleNotFoundError: No module named 'cryptography'
-
-    pip install --user cryptography
-    
-Just run python ui.py to start
-
-You can allso pass your Decripted Amiibo to amiibo_class.py for re-signing the data block.
-
 
 # Windows install Guide
 
@@ -34,23 +24,10 @@ You can allso pass your Decripted Amiibo to amiibo_class.py for re-signing the d
 
 # Install with pip
 
-Install globally (requires root)
+install to your users home directory.
 
 ```console
-sudo python3 -m pip install git+https://github.com/odwdinc/SSBU_Amiibo.git
-```
-
-Or install to your users home directory (no root required).
-
-```console
-python3 -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
-```
-
-Add the bin directory for python local installs to your PATH in your `~/.bashrc`
-file.
-
-```console
-export PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin"
+python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
 ```
 
 # Run the Code
@@ -63,7 +40,7 @@ export PATH="${PATH}:$(python3 -c 'import site; print(site.USER_BASE)')/bin"
 
 ### While holding down ctrl+shift right click in the Amiibo folder to get acces to the "Open PowerShell window here"
 
-### Run the UI with the  command "ssbu_amiibo"
+### Run the UI with the command "ssbu_amiibo"
 
 ### New window will load with UI.
 ![Run Code](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/RunCode_7.PNG)
