@@ -44,6 +44,8 @@ class HexWindow:
 		self.encodingCombobox = ttk.Combobox(
 			frame, values=ENCODINGS, textvariable=self.encoding,
 			state="readonly")
+		self.saveButton = ttk.Button(frame, text="Save", underline=0,
+									 command=self.save)
 		self.quitButton = ttk.Button(frame, text="Quit", underline=0,
 									 command=self.quit)
 		self.create_view()
@@ -66,7 +68,7 @@ class HexWindow:
 
 	def create_layout(self):
 		for column, widget in enumerate((
-				self.encodingLabel, self.encodingCombobox,
+				self.encodingLabel, self.encodingCombobox, self.saveButton,
 				self.quitButton)):
 			widget.grid(row=0, column=column, sticky=tk.W)
 		self.viewText.grid(row=1, column=0, columnspan=6, sticky=tk.NSEW)
@@ -179,12 +181,12 @@ class HexWindow:
 			self.filename = filename
 			self.show_block()
 
-	def quit(self, event=None):
+	def save(self, event=None):
 		HexText = self.viewText.get("1.0","end").replace('\n', '').replace(' ', '')
-
 		with open(self.filename, "wb") as file:
 			file.write(bytes.fromhex(HexText))
 
+	def quit(self, event=None):
 		self.parent.destroy()
 		self.exitFunc(self.filename)
 		
