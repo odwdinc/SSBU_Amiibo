@@ -1,7 +1,7 @@
 # SSBU_Amiibo
 Just a start for the Amiibo editor 
 
-you will need to porvide your own Amiibo Keys in retail.key for Encription and Decription to work
+you will need to porvide your own Amiibo Keys in key_retail.bin for Encription and Decription to work
 
 
 # Windows install Guide
@@ -35,8 +35,6 @@ python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
 ### Find copy of "KEY RETAIL MUST HAVE TO FLASH AMIIBO.zip" or other copy of "key_retail.bin"
 
 ### Copy/Extract "key_retail.bin" to folder called Amiibo
-
-### Rename "key_retail.bin" to "retail.key"
 
 ### While holding down ctrl+shift right click in the Amiibo folder to get acces to the "Open PowerShell window here"
 

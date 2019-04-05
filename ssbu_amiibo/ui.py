@@ -293,7 +293,7 @@ def maine():
 	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file
 	window = Tk()
 
-	key_file = Path("./retail.key").is_file()
+	key_file = Path("./key_retail.bin").is_file()
 
 	chk_state_learn = BooleanVar() 
 	chk_state_learn.set(False)
@@ -310,7 +310,7 @@ def maine():
 	sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
 
 	if (key_file):
-		with open('./retail.key', 'rb') as fp_d:
+		with open('./key_retail.bin', 'rb') as fp_d:
 			master_keys = AmiiboMasterKey.from_combined_bin(fp_d.read())
 
 	if(key_file):
