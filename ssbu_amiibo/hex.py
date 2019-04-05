@@ -176,6 +176,7 @@ class HexWindow:
 		if filename and os.path.exists(filename):
 			self.parent.title("{} — {}".format(filename, APPNAME))
 			size = os.path.getsize(filename)
+			print(filename , size)
 			size = (size - BLOCK_SIZE if size > BLOCK_SIZE else
 					size - BLOCK_WIDTH)
 			self.filename = filename
@@ -188,18 +189,18 @@ class HexWindow:
 
 	def quit(self, event=None):
 		self.parent.destroy()
-		self.exitFunc(self.filename)
+		self.exitFunc[1](self.filename,self.exitFunc[0])
 		
 
-def ExitHex(file):
-	print(file)
+def ExitHex(file,var):
+	print(file,var)
 
 def maine():
 	app = tk.Tk()
 	app.title(APPNAME)
 	DBName = filedialog.askopenfilename(filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
 	if DBName:
-		HexWin = HexWindow(app,DBName,ExitHex)
+		HexWin = HexWindow(app,DBName,('test',ExitHex))
 	app.protocol("WM_DELETE_WINDOW", app.quit)
 	app.resizable(width=False, height=False)
 	app.mainloop()

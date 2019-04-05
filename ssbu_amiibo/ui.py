@@ -212,17 +212,48 @@ def QuitCmd():
 	quit(0)
 
 
+def ExportUn0():
+	Export('un0')
+def ExportUn1():
+	Export('un1')
+def ExportUn3():
+	Export('un3')
+
+def InportUn0():
+	Inport('un0')
+def InportUn1():
+	Inport('un1')
+def InportUn3():
+	Inport('un3')
+
+def Export(var):
+	DBName = filedialog.asksaveasfilename(defaultextension="."+var+"_db",filetypes = (("Smash "+var+"_Block","*."+var+"_db"),("Smash "+var+"_Block","*."+var+"_db")))
+	if DBName:
+		with open(DBName, "wb") as fdb:
+			print(len(ssb.ds1[var]))
+			fdb.write(ssb.ds1[var])
+		HexWin = HexWindow(window,DBName,(var,ExitHex))
+
+def Inport(var):
+	DBName = filedialog.askopenfilename(filetypes = (("Smash "+var+"_Block","*."+var+"_db"),("Smash "+var+"_Block","*."+var+"_db")))
+	if DBName:
+		with open(DBName, "rb") as fdb:
+			ssb.ds1[var] = bytearray(fdb.read())
+
 def ExportDB():
 	DBName = filedialog.asksaveasfilename(defaultextension=".bind_db",filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
-
 	if DBName:
 		ssb.dataBlockToFile(DBName)
-		HexWin = HexWindow(window,DBName,ExitHex)
+		HexWin = HexWindow(window,DBName,(None,ExitHex))
 
-def ExitHex(DBName):
-	ssb.dataBlockFromeFile(DBName)
-	ssb.unpackData()
-	handaleSSB()
+def ExitHex(DBName,VarName):
+	if VarName is None:
+		ssb.dataBlockFromeFile(DBName)
+		ssb.unpackData()
+		handaleSSB()
+	else:
+		with open(DBName, "rb") as fdb:
+			ssb.ds1[VarName] = bytearray(fdb.read())
 
 
 def InportDB():
@@ -318,9 +349,15 @@ def maine():
 		enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 		drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
 		block_item = Menu(menu, tearoff=0)
-		block_item.add_command(label='Export DataBlock',command=ExportDB)
-		block_item.add_command(label='Import DataBlock',command=InportDB)
-		
+		block_item.add_command(label='Export Full DataBlock',command=ExportDB)
+		block_item.add_command(label='Export Un0_Block',command=ExportUn0)
+		block_item.add_command(label='Export Un1_Block',command=ExportUn1)
+		block_item.add_command(label='Export Un3_Block',command=ExportUn3)
+		block_item.add_separator()
+		block_item.add_command(label='Import Full DataBlock',command=InportDB)
+		block_item.add_command(label='Import Un0_Block',command=InportUn0)
+		block_item.add_command(label='Import Un1_Block',command=InportUn1)
+		block_item.add_command(label='Import Un3_Block',command=InportUn3)
 
 		
 
