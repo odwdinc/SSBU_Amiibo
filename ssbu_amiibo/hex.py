@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+## Addapted form http://www.qtrac.eu/pyhexviewer.html
 import os
 import sys
 import tkinter as tk
@@ -22,16 +23,16 @@ class HexWindow:
 
 	def __init__(self, parent, filename,exitFunc):
 		self.exitFunc  = exitFunc
-
-		self.top = Toplevel(parent)
-		self.top.title(APPNAME)
-		self.parent = self.top
+		self.parent = parent
 		self.create_variables()
 		self.create_widgets()
 		self.create_layout()
 		self.create_bindings()
-		print(filename)
-		self._open(filename)
+		self.isFile = False
+		self.filename = filename
+
+		self.reset()
+
 
 	def create_variables(self):
 		self.filename = None
@@ -46,6 +47,8 @@ class HexWindow:
 			state="readonly")
 		self.saveButton = ttk.Button(frame, text="Save", underline=0,
 									 command=self.save)
+		self.resetButton = ttk.Button(frame, text="Reset", underline=0,
+									 command=self.reset)
 		self.quitButton = ttk.Button(frame, text="Quit", underline=0,
 									 command=self.quit)
 		self.create_view()
@@ -60,7 +63,7 @@ class HexWindow:
 		self.viewText.bind('<Key>', self.viewTextCallback)
 
 		self.viewText_enc = tk.Text(self.frame, height=BLOCK_HEIGHT,
-								width=2 + (BLOCK_WIDTH * 4))
+								width=20)
 		self.viewText_enc.tag_configure("ascii", foreground="green")
 		self.viewText_enc.tag_configure("error", foreground="red")
 		self.viewText_enc.tag_configure("hexspace", foreground="navy")
@@ -68,7 +71,7 @@ class HexWindow:
 
 	def create_layout(self):
 		for column, widget in enumerate((
-				self.encodingLabel, self.encodingCombobox, self.saveButton,
+				self.encodingLabel, self.encodingCombobox, self.saveButton,self.resetButton,
 				self.quitButton)):
 			widget.grid(row=0, column=column, sticky=tk.W)
 		self.viewText.grid(row=1, column=0, columnspan=6, sticky=tk.NSEW)
@@ -76,10 +79,11 @@ class HexWindow:
 		self.frame.grid(row=0, column=0, sticky=tk.NSEW)
 
 	def create_bindings(self):
-		for keypress in ("<Control-q>", "<Alt-q>", "<Escape>"):
-			self.parent.bind(keypress, self.quit)
 
-	def updateBlock(self, block):
+		self.encodingCombobox.bind("<<ComboboxSelected>>", self.encodingChanged)
+
+	def updateBlock(self):
+		block = self.dataByts
 		self.viewText.delete("1.0", "end")
 		self.viewText_enc.delete("1.0", "end")
 		rows = [block[i:i + BLOCK_WIDTH]
@@ -90,7 +94,7 @@ class HexWindow:
 		self.viewText.insert("end", "\n")
 		self.viewText_enc.insert("end", "\n")
 
-	def show_block(self, *args):
+	def open_block(self, *args):
 		
 		if not self.filename:
 			return
@@ -100,7 +104,8 @@ class HexWindow:
 				block = file.read(BLOCK_SIZE)
 			except ValueError: # Empty offsetSpinbox
 				return
-			self.updateBlock(block)
+			self.dataByts = block
+			self.updateBlock()
 
 	def viewTextCallback(self, event):
 		CharList = ('1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F')
@@ -112,12 +117,10 @@ class HexWindow:
 		if(event.keysym == 'Right'):
 			y = y+(2-y%3)
 			outstr =  "{}.{}".format(x,y).strip()
-			#print(pos,outstr)
 			self.viewText.mark_set("insert",outstr)
 		elif(event.keysym == 'Left'):
 			y = y-(y-1)%3
 			outstr =  "{}.{}".format(x,y).strip()
-			#print(pos,outstr)
 			self.viewText.mark_set("insert",outstr)
 		elif event.char in CharList:
 			
@@ -130,23 +133,30 @@ class HexWindow:
 
 			self.viewText.delete(pos)
 			self.viewText.insert(pos, event.char)
-			#print(pos,event.char)
-			self.resetLines()
 			self.viewText.mark_set("insert",endPos)
+			self.resetLines()
 			return "break"
 		elif (event.keysym == 'Up') or (event.keysym == 'Down'):
 			pass
 		else:
-			print(event)
-			#outstr =  "{}.{}".format(x,y+1).strip()
-			#self.viewText.delete(outstr)
 			return "break"
-		
+	def reset(self):
+		try:
+			data = self.filename.decode()
+			self.dataByts = self.filename
+			self.updateBlock()
+		except AttributeError:
+			if self.filename and os.path.exists(self.filename):
+				self.isFile = True
+				self._open(self.filename)
+			
 
 	def resetLines(self):
+		pos =  self.viewText.index(tk.INSERT)
 		HexText = self.viewText.get("1.0","end").replace('\n', '').replace(' ', '')
-		self.updateBlock(bytes.fromhex(HexText))
-
+		self.dataByts = bytes.fromhex(HexText)
+		self.updateBlock()
+		self.viewText.mark_set("insert",pos)
 
 	def show_bytes(self, row):
 		for byte in row:
@@ -176,19 +186,26 @@ class HexWindow:
 		if filename and os.path.exists(filename):
 			self.parent.title("{} — {}".format(filename, APPNAME))
 			size = os.path.getsize(filename)
-			print(filename , size)
 			size = (size - BLOCK_SIZE if size > BLOCK_SIZE else
 					size - BLOCK_WIDTH)
-			self.filename = filename
-			self.show_block()
+			
+			self.open_block()
+
+	def encodingChanged(self, event=None):
+
+		self.resetLines()
 
 	def save(self, event=None):
 		HexText = self.viewText.get("1.0","end").replace('\n', '').replace(' ', '')
-		with open(self.filename, "wb") as file:
-			file.write(bytes.fromhex(HexText))
+		if self.isFile:
+			with open(self.filename, "wb") as file:
+				file.write(bytes.fromhex(HexText))
+		else:
+			self.filename = bytes.fromhex(HexText)
 
 	def quit(self, event=None):
 		self.parent.destroy()
+		
 		self.exitFunc[1](self.filename,self.exitFunc[0])
 		
 
@@ -198,9 +215,9 @@ def ExitHex(file,var):
 def maine():
 	app = tk.Tk()
 	app.title(APPNAME)
-	DBName = filedialog.askopenfilename(filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
+	DBName = filedialog.askopenfilename(filetypes = (("All Files","*.*"),("","")))
 	if DBName:
-		HexWin = HexWindow(app,DBName,('test',ExitHex))
+		HexWin = HexWindow(app,b'DBName',('test',ExitHex))
 	app.protocol("WM_DELETE_WINDOW", app.quit)
 	app.resizable(width=False, height=False)
 	app.mainloop()

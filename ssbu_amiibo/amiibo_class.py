@@ -32,7 +32,7 @@ class ssbu:
 		self.data = bytearray(self.f.read(0xD4))
 		self.ds1 =0
 		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift')
-		self.DataPatern = "<?9sBBB91sIHhh1sH"
+		self.DataPatern = "<?9sBBB91sI1shh1sH"
 		self.DataOffset = 0x02
 		self.unpackData()
 

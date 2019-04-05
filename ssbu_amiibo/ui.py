@@ -68,13 +68,13 @@ for k_name in MoveList:
 		No_Skills_dec.append(k_name)
 
 
-if(len(unknown_Skills)> 0):
-	print("\n\nunknown_Skills",unknown_Skills)
-	print("\n\n")
+#if(len(unknown_Skills)> 0):
+#	print("\n\nunknown_Skills",unknown_Skills)
+#	print("\n\n")
 
-if(len(No_Skills_dec)>0):
-	print("\n\nNo_Skills_dec",No_Skills_dec)
-	print("\n\n")
+#if(len(No_Skills_dec)>0):
+#	print("\n\nNo_Skills_dec",No_Skills_dec)
+#	print("\n\n")
 
 
 def OpenCmd():
@@ -216,6 +216,8 @@ def ExportUn0():
 	Export('un0')
 def ExportUn1():
 	Export('un1')
+def ExportUn2():
+	Export('un2')
 def ExportUn3():
 	Export('un3')
 
@@ -223,8 +225,33 @@ def InportUn0():
 	Inport('un0')
 def InportUn1():
 	Inport('un1')
+def InportUn2():
+	Inport('un2')
 def InportUn3():
 	Inport('un3')
+
+def EditUn0():
+	Edit('un0')
+def EditUn1():
+	Edit('un1')
+def EditUn2():
+	Edit('un2')
+def EditUn3():
+	Edit('un3')
+def EditDB():
+	Edit('DB')
+
+
+def Edit(var):
+	top = Toplevel(window)
+	top.title("Hex View")
+
+	if var == 'DB':
+		HexWin = HexWindow(top,ssb.data,(None,ExitHex))
+	else:
+		HexWin = HexWindow(top,ssb.ds1[var],(var,ExitHex))
+
+	
 
 def Export(var):
 	DBName = filedialog.asksaveasfilename(defaultextension="."+var+"_db",filetypes = (("Smash "+var+"_Block","*."+var+"_db"),("Smash "+var+"_Block","*."+var+"_db")))
@@ -232,7 +259,6 @@ def Export(var):
 		with open(DBName, "wb") as fdb:
 			print(len(ssb.ds1[var]))
 			fdb.write(ssb.ds1[var])
-		HexWin = HexWindow(window,DBName,(var,ExitHex))
 
 def Inport(var):
 	DBName = filedialog.askopenfilename(filetypes = (("Smash "+var+"_Block","*."+var+"_db"),("Smash "+var+"_Block","*."+var+"_db")))
@@ -244,16 +270,14 @@ def ExportDB():
 	DBName = filedialog.asksaveasfilename(defaultextension=".bind_db",filetypes = (("Smash DataBlock","*.bind_db"),("Smash DataBlock","*.bind_db")))
 	if DBName:
 		ssb.dataBlockToFile(DBName)
-		HexWin = HexWindow(window,DBName,(None,ExitHex))
 
 def ExitHex(DBName,VarName):
 	if VarName is None:
-		ssb.dataBlockFromeFile(DBName)
+		ssb.data = DBName
 		ssb.unpackData()
 		handaleSSB()
 	else:
-		with open(DBName, "rb") as fdb:
-			ssb.ds1[VarName] = bytearray(fdb.read())
+		ssb.ds1[VarName] = DBName
 
 
 def InportDB():
@@ -352,12 +376,20 @@ def maine():
 		block_item.add_command(label='Export Full DataBlock',command=ExportDB)
 		block_item.add_command(label='Export Un0_Block',command=ExportUn0)
 		block_item.add_command(label='Export Un1_Block',command=ExportUn1)
+		block_item.add_command(label='Export Un2_Block',command=ExportUn2)
 		block_item.add_command(label='Export Un3_Block',command=ExportUn3)
 		block_item.add_separator()
 		block_item.add_command(label='Import Full DataBlock',command=InportDB)
 		block_item.add_command(label='Import Un0_Block',command=InportUn0)
 		block_item.add_command(label='Import Un1_Block',command=InportUn1)
+		block_item.add_command(label='Import Un2_Block',command=InportUn2)
 		block_item.add_command(label='Import Un3_Block',command=InportUn3)
+		block_item.add_separator()
+		block_item.add_command(label='Edit Full DataBlock',command=EditDB)
+		block_item.add_command(label='Edit Un0_Block',command=EditUn0)
+		block_item.add_command(label='Edit Un1_Block',command=EditUn1)
+		block_item.add_command(label='Edit Un2_Block',command=EditUn2)
+		block_item.add_command(label='Edit Un3_Block',command=EditUn3)
 
 		
 
