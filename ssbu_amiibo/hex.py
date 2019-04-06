@@ -19,6 +19,7 @@ BLOCK_SIZE = BLOCK_WIDTH * BLOCK_HEIGHT
 ENCODINGS = ("ASCII", "CP037", "CP850", "CP1140", "CP1252",
 			 "Latin1", "ISO8859_15", "Mac_Roman", "UTF-8",
 			 "UTF-8-sig", "UTF-16", "UTF-32")
+CharList = ('1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F')
 class HexWindow:
 
 	def __init__(self, parent, filename,exitFunc):
@@ -42,9 +43,16 @@ class HexWindow:
 	def create_widgets(self):
 		frame = self.frame = ttk.Frame(self.parent)
 		self.encodingLabel = ttk.Label(frame, text="Encoding", underline=0)
+		self.OffsetLabel = ttk.Label(frame, text="Offset  0x", underline=0)
+		self.Spacer = ttk.Label(frame, text="    ", underline=0)
+
 		self.encodingCombobox = ttk.Combobox(
 			frame, values=ENCODINGS, textvariable=self.encoding,
 			state="readonly")
+
+		self.GoButton = ttk.Button(frame, text="GO", underline=0,
+									 command=self.GoOffset)
+
 		self.saveButton = ttk.Button(frame, text="Save", underline=0,
 									 command=self.save)
 		self.resetButton = ttk.Button(frame, text="Reset", underline=0,
@@ -54,8 +62,12 @@ class HexWindow:
 		self.create_view()
 
 	def create_view(self):
+		self.offsetver = tk.Text(self.frame, height=1,
+								width=6)
+		self.offsetver.bind('<Key>', self.viewOffsetCallback)
+
 		self.offsethorz = tk.Text(self.frame, height=BLOCK_HEIGHT,
-								width=1)
+								width=6)
 		self.offsetvert = tk.Text(self.frame, height=1,
 								width=BLOCK_WIDTH)
 
@@ -75,10 +87,13 @@ class HexWindow:
 		self.viewText_enc.tag_configure("graybg", background="lightgray")
 
 	def create_layout(self):
-		for column, widget in enumerate((
-				self.encodingLabel, self.encodingCombobox, self.saveButton,self.resetButton,
+		for column, widget in enumerate((self.OffsetLabel, self.offsetver,self.GoButton,self.Spacer, self.saveButton,self.resetButton,
 				self.quitButton)):
 			widget.grid(row=0, column=column, sticky=tk.W)
+
+		self.encodingLabel.grid(row=1, column=7, sticky=tk.W)
+		self.encodingCombobox.grid(row=1, column=8, sticky=tk.W)
+
 		self.offsetvert.grid(row=1, column=1, columnspan=6, sticky=tk.NSEW)
 		self.offsethorz.grid(row=2, column=0, columnspan=1, sticky=tk.NSEW)
 		self.viewText.grid(row=2, column=1, columnspan=6, sticky=tk.NSEW)
@@ -122,8 +137,19 @@ class HexWindow:
 			self.dataByts = block
 			self.updateBlock()
 
+	def viewOffsetCallback(self,event):
+		if(event.keysym == 'Return'):
+			self.GoOffset()
+			return "break"
+		elif event.char.upper() in CharList:
+			pass
+		elif event.keysym in ['BackSpace','Left','Right']:
+			pass
+		else:
+			return "break"
+
 	def viewTextCallback(self, event):
-		CharList = ('1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F')
+		
 		pos =  self.viewText.index(tk.INSERT)
 		x,y = pos.split('.',1)
 		x =  int(x)
@@ -137,7 +163,7 @@ class HexWindow:
 			y = y-(y-1)%3
 			outstr =  "{}.{}".format(x,y).strip()
 			self.viewText.mark_set("insert",outstr)
-		elif event.char in CharList:
+		elif event.char.upper() in CharList:
 			
 			if self.viewText.get(pos) == ' ':
 				pos =  "{}.{}".format(x,y+1).strip()
@@ -175,6 +201,16 @@ class HexWindow:
 		self.dataByts = bytes.fromhex(HexText)
 		self.updateBlock()
 		self.viewText.mark_set("insert",pos)
+
+	def GoOffset(self):
+
+		pos = int(self.offsetver.get("1.0","end"), 16)
+		x = int(pos/16)+1
+		y = int(pos % 16)
+
+		Pos = "{}.{}".format(x,y*3).strip()
+		self.viewText.mark_set("insert",Pos)
+		self.viewText.focus()
 
 	def show_bytes(self, row):
 		for byte in row:
