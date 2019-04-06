@@ -29,7 +29,9 @@ setup(
 
     install_requires=[
       'pyamiibo @ git+ssh://git@github.com/odwdinc/pyamiibo@master'
-      'cryptography'
+      'cryptography',
+      'Pillow',
+      'requests'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

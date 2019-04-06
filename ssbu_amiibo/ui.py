@@ -15,9 +15,13 @@ from amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
 from ssbu_amiibo.hex import HexWindow
+from ssbu_amiibo.trainingData import training
+from PIL import ImageTk
+
 
 file = None
 ssb = None
+traningMenu=None
 
 def amiitools_to_dump(internal):
     """Convert a 3DS/amiitools internal dump to the standard Amiibo/NTAG215
@@ -76,16 +80,15 @@ for k_name in MoveList:
 #	print("\n\nNo_Skills_dec",No_Skills_dec)
 #	print("\n\n")
 
-
 def OpenCmd():
 	global file, new_item
 	if(file):
 		file.close()
 	file = filedialog.askopenfile(mode='rb+', filetypes = (("Amiibo Decripted","*.bind"),("Amiibo Decripted","*.bind")))
 	handaleFile()
-
+from tkinter import messagebox
 def handaleFile():
-	global ssb,menu
+	global ssb, menu, background_label, trainData , window ,traningMenu
 	if(file):
 		new_item.entryconfig(1,state=NORMAL)
 		
@@ -93,7 +96,24 @@ def handaleFile():
 			new_item.entryconfig(3,state=NORMAL)
 			menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
+		img2 = ImageTk.PhotoImage(ssb.img)
+		background_label.configure(image=img2)
+		background_label.image = img2
+		window.title("SSBU Amiibo editor " + ssb.webdata['amiibo']['name'])
+		menu.delete(3)
+		for train in training:
+			if training[train]['head'] == ssb.webdata['amiibo']['head']:
+				print(train)
+				trainData = training[train]
+				items = Menu(menu, tearoff=0)
+				for move in trainData['data']:
+					print("	"+move[0])
+					items.add_command(label=move[0], command=(lambda move: lambda: traningFunc(move))(move))
+				menu.add_cascade(label='Traning', menu= items)
 		handaleSSB()
+
+def traningFunc(var):
+	 messagebox.showinfo(var[0],var[1])
 
 def handaleSSB():
 
@@ -345,7 +365,7 @@ def Entry_Change(this_move):
 		this_move['Combobox'].set(name)
 	return True
 def maine():
-	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file
+	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
 	window = Tk()
 
 	key_file = Path("./key_retail.bin").is_file()
@@ -354,7 +374,7 @@ def maine():
 	chk_state_learn.set(False)
 	 
 	window.title("SSBU Amiibo editor")
-	window.geometry('1040x280')
+	window.geometry('1040x400')
 
 	menu = Menu(window)
 	 
@@ -402,6 +422,10 @@ def maine():
 		menu.add_cascade(label='Data', menu=block_item , state='disabled')
 	window.config(menu=menu)
 	window.bind("<Key>", key)
+
+	background_label = Label(window)
+	background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
 
 	chk_learn = Checkbutton(window, text='Learning On/Off', var=chk_state_learn)
 	chk_learn.grid(column=0, row=0)

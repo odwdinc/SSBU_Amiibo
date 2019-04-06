@@ -149,6 +149,9 @@ class HexWindow:
 			if self.filename and os.path.exists(self.filename):
 				self.isFile = True
 				self._open(self.filename)
+		except UnicodeDecodeError:
+			self.dataByts = self.filename
+			self.updateBlock()
 			
 
 	def resetLines(self):

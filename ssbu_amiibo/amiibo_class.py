@@ -2,6 +2,13 @@
 import sys, struct
 from pathlib import Path
 from collections import namedtuple
+
+import json
+import urllib.request
+import requests
+from io import BytesIO
+from PIL import Image
+
 class crc32r:
 	def __init__(self, p0 = 0xEDB88320):
 		p0 |= 0x80000000
@@ -30,11 +37,14 @@ class ssbu:
 		self.crc32 = crc32r()
 		self.f.seek(0xE0, 0x0)
 		self.data = bytearray(self.f.read(0xD4))
+		self.f.seek(0x1DC, 0x0)
+		self.ID = bytearray(self.f.read(8))
 		self.ds1 =0
 		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift')
 		self.DataPatern = "<?9sBBB91sI1shh1sH"
 		self.DataOffset = 0x02
 		self.unpackData()
+		self.GetWebData()
 
 	def calLevel(self, xp):
 		x = xp / 1000000
@@ -79,6 +89,18 @@ class ssbu:
 		self.ds1['gift'] = Gift
 
 	
+	def GetWebData(self):
+		self.webdata =  None
+		self.img = None
+		self.ID = ''.join(format(x, '02x') for x in self.ID)
+		req = urllib.request.Request('https://www.amiiboapi.com/api/amiibo/?id='+self.ID)
+		with urllib.request.urlopen(req) as response:
+			result = json.loads(response.readline().decode("utf-8"))
+			self.webdata = result
+		if self.webdata and 'amiibo' in self.webdata:
+			response = requests.get(self.webdata['amiibo']['image'])
+			self.img = Image.open(BytesIO(response.content))
+
 
 	def unpackData(self):
 		self.ds1 = self.ds._asdict(self.ds._make(struct.unpack_from(self.DataPatern, self.data, self.DataOffset)))
