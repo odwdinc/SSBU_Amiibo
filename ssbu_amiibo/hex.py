@@ -54,6 +54,11 @@ class HexWindow:
 		self.create_view()
 
 	def create_view(self):
+		self.offsethorz = tk.Text(self.frame, height=BLOCK_HEIGHT,
+								width=1)
+		self.offsetvert = tk.Text(self.frame, height=1,
+								width=BLOCK_WIDTH)
+
 		self.viewText = tk.Text(self.frame, height=BLOCK_HEIGHT,
 								width=2 + (BLOCK_WIDTH * 3))
 		self.viewText.tag_configure("ascii", foreground="green")
@@ -74,11 +79,21 @@ class HexWindow:
 				self.encodingLabel, self.encodingCombobox, self.saveButton,self.resetButton,
 				self.quitButton)):
 			widget.grid(row=0, column=column, sticky=tk.W)
-		self.viewText.grid(row=1, column=0, columnspan=6, sticky=tk.NSEW)
-		self.viewText_enc.grid(row=1, column=7, columnspan=6, sticky=tk.NSEW)
+		self.offsetvert.grid(row=1, column=1, columnspan=6, sticky=tk.NSEW)
+		self.offsethorz.grid(row=2, column=0, columnspan=1, sticky=tk.NSEW)
+		self.viewText.grid(row=2, column=1, columnspan=6, sticky=tk.NSEW)
+		self.viewText_enc.grid(row=2, column=7, columnspan=6, sticky=tk.NSEW)
 		self.frame.grid(row=0, column=0, sticky=tk.NSEW)
 
+		self.offsetvert.insert("end", "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F")
+		for x in range(0,BLOCK_SIZE,16):
+			x = "{0:0{1}x}".format(x,6)
+			self.offsethorz.insert("end", ""+str(x)+"\n")#0010\n  0020\n0030\n0040\n0050\n0060\n0070\n0080\n0090\n00A0\n00B0\n00C0\n00D0\n00E0\n00F0\n")
+
 	def create_bindings(self):
+		self.offsethorz.bind("<MouseWheel>", self.scrolloed)
+		self.viewText.bind("<MouseWheel>", self.scrolloed)
+		self.viewText_enc.bind("<MouseWheel>", self.scrolloed)
 
 		self.encodingCombobox.bind("<<ComboboxSelected>>", self.encodingChanged)
 
@@ -194,6 +209,14 @@ class HexWindow:
 			
 			self.open_block()
 
+
+	def scrolloed(self, event=None):
+		pos = int(-1*(event.delta/120))
+		#print(pos)
+		self.offsethorz.yview_scroll(pos, "units")
+		self.viewText.yview_scroll(pos, "units")
+		self.viewText_enc.yview_scroll(pos, "units")
+
 	def encodingChanged(self, event=None):
 
 		self.resetLines()
@@ -220,7 +243,7 @@ def maine():
 	app.title(APPNAME)
 	DBName = filedialog.askopenfilename(filetypes = (("All Files","*.*"),("","")))
 	if DBName:
-		HexWin = HexWindow(app,b'DBName',('test',ExitHex))
+		HexWin = HexWindow(app,DBName,('test',ExitHex))
 	app.protocol("WM_DELETE_WINDOW", app.quit)
 	app.resizable(width=False, height=False)
 	app.mainloop()

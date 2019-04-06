@@ -293,3 +293,36 @@ training = {
 ]},
 }
 
+DatablockOffest= 0xE0
+un0Offest= 0x03
+un1Offest= 0x0F
+un4Offest= 0x76
+
+knowLocations = {
+'un0':{},
+'un1':{},
+'un4':{
+
+		0x168-DatablockOffest-un4Offest:	"Attacking???",
+		0x169-DatablockOffest-un4Offest:	"Attacking???",
+		0x16A-DatablockOffest-un4Offest:	"Attacking???",
+		0x16B-DatablockOffest-un4Offest:	"Attacking???",
+
+		0x181-DatablockOffest-un4Offest: 	"Taunting! its value based, so the greater the Hex Value the more the Amiibo will taunt!",
+		0x171-DatablockOffest-un4Offest: 	"Grabbing! Also Value Based, but not as great as Taunting.",
+
+		0x18A-DatablockOffest-un4Offest:	"A special Neutral",
+		0x18B-DatablockOffest-un4Offest:	"A special Side",
+		0x18C-DatablockOffest-un4Offest:	"A special Up",
+		0x18D-DatablockOffest-un4Offest:	"A special Down",
+
+		0x19A-DatablockOffest-un4Offest: 	"B special Neutral",
+		0x19B-DatablockOffest-un4Offest:	"B special Side",
+		0x19C-DatablockOffest-un4Offest:	"B special Up",
+		0x19D-DatablockOffest-un4Offest:	"B special Down",
+	}
+
+}
+
+#for loc in knowLocations['un4']:
+#	print ("0x%0.2X" % loc)

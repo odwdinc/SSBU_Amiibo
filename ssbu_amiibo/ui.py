@@ -15,7 +15,7 @@ from amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
 from ssbu_amiibo.hex import HexWindow
-from ssbu_amiibo.trainingData import training
+from ssbu_amiibo.trainingData import training, knowLocations
 from PIL import ImageTk
 
 
@@ -96,6 +96,7 @@ def handaleFile():
 			new_item.entryconfig(3,state=NORMAL)
 			menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
+
 		img2 = ImageTk.PhotoImage(ssb.img)
 		background_label.configure(image=img2)
 		background_label.image = img2
@@ -232,35 +233,6 @@ def QuitCmd():
 	quit(0)
 
 
-def ExportUn0():
-	Export('un0')
-def ExportUn1():
-	Export('un1')
-def ExportUn2():
-	Export('un2')
-def ExportUn3():
-	Export('un3')
-
-def InportUn0():
-	Inport('un0')
-def InportUn1():
-	Inport('un1')
-def InportUn2():
-	Inport('un2')
-def InportUn3():
-	Inport('un3')
-
-def EditUn0():
-	Edit('un0')
-def EditUn1():
-	Edit('un1')
-def EditUn2():
-	Edit('un2')
-def EditUn3():
-	Edit('un3')
-def EditDB():
-	Edit('DB')
-
 
 def Edit(var):
 	top = Toplevel(window)
@@ -370,6 +342,8 @@ def maine():
 
 	key_file = Path("./key_retail.bin").is_file()
 
+
+
 	chk_state_learn = BooleanVar() 
 	chk_state_learn.set(False)
 	 
@@ -394,23 +368,17 @@ def maine():
 		drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
 		block_item = Menu(menu, tearoff=0)
 		block_item.add_command(label='Export Full DataBlock',command=ExportDB)
-		block_item.add_command(label='Export Un0_Block',command=ExportUn0)
-		block_item.add_command(label='Export Un1_Block',command=ExportUn1)
-		block_item.add_command(label='Export Un2_Block',command=ExportUn2)
-		block_item.add_command(label='Export Un3_Block',command=ExportUn3)
+		for un in range(0,5):
+			block_item.add_command(label='Export Un'+str(un)+'_Block',command=(lambda un: lambda: Export('un'+un))(str(un)))
 		block_item.add_separator()
 		block_item.add_command(label='Import Full DataBlock',command=InportDB)
-		block_item.add_command(label='Import Un0_Block',command=InportUn0)
-		block_item.add_command(label='Import Un1_Block',command=InportUn1)
-		block_item.add_command(label='Import Un2_Block',command=InportUn2)
-		block_item.add_command(label='Import Un3_Block',command=InportUn3)
+		for un in range(0,5):
+			block_item.add_command(label='Import Un'+str(un)+'_Block',command=(lambda un: lambda: Inport('un'+un))(str(un)))
 		block_item.add_separator()
-		block_item.add_command(label='Edit Full DataBlock',command=EditDB)
-		block_item.add_command(label='Edit Un0_Block',command=EditUn0)
-		block_item.add_command(label='Edit Un1_Block',command=EditUn1)
-		block_item.add_command(label='Edit Un2_Block',command=EditUn2)
-		block_item.add_command(label='Edit Un3_Block',command=EditUn3)
-
+		
+		block_item.add_command(label='Edit Full DataBlock',command=(lambda: Edit('DB')))
+		for un in range(0,5):
+			block_item.add_command(label='Edit Un'+str(un)+'_Block',command=(lambda un: lambda: Edit('un'+un))(str(un)))
 		
 
 	new_item.add_separator()	

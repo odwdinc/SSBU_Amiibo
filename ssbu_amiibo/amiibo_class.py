@@ -40,8 +40,11 @@ class ssbu:
 		self.f.seek(0x1DC, 0x0)
 		self.ID = bytearray(self.f.read(8))
 		self.ds1 =0
-		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift')
-		self.DataPatern = "<?9sBBB91sI1shh1sH"
+		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4')
+		self.DataPatternOffests = {'learn': 2, 'un0': 3, 'move1': 12, 'move2': 13, 'move3': 14, 'un1': 15, 'xp': 106, 'un2': 110, 'atc': 111, 'hp': 113, 'un3': 115, 'gift': 116, 'un4': 118}
+
+
+		self.DataPatern = "<?9sBBB91sI1shh1sH94s"
 		self.DataOffset = 0x02
 		self.unpackData()
 		self.GetWebData()
@@ -103,6 +106,7 @@ class ssbu:
 
 
 	def unpackData(self):
+		print(len(self.data))
 		self.ds1 = self.ds._asdict(self.ds._make(struct.unpack_from(self.DataPatern, self.data, self.DataOffset)))
 	
 	def packData(self):
