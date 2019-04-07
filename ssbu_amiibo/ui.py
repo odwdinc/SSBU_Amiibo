@@ -50,35 +50,96 @@ def dump_to_amiitools(dump):
     internal[0x1DC:0x208] = dump[0x054:0x080]
     return internal
 
-MoveNames = list(MoveCodeList.keys())
+class MoveData:
+	def __init__(self):
+		self.MoveNames = list(MoveCodeList.keys())
+		self.MoveList =[k for k in MoveCodeList if not k.isdigit() and MoveCodeList[k] > 0]
 
-MoveList =[k for k in MoveCodeList if not k.isdigit() and MoveCodeList[k] > 0]
+	def itemClicked(self, event, _tree):
+		ID = self.TreeList[_tree]['Treeview'].focus()
+		if  "I" not in ID:
+			parent_iid = self.TreeList[_tree]['Treeview'].parent(ID)
+			ParentName = self.TreeList[_tree]['Treeview'].item(parent_iid)['text']
+			Name =  self.TreeList[_tree]['Treeview'].item(ID)['text']
+			Values = self.TreeList[_tree]['Treeview'].item(ID)['values']
+			self.TreeList[_tree]['EntryText'].set(ID)
 
-Skills = {}
-unknown_Skills = []
+			print (ID,ParentName ,Name ,Values)
 
-for s_type in Skill_Set:
-	for s_name in Skill_Set[s_type]:
-		if s_name in MoveList:
-			Skill_Set[s_type][s_name].append(s_type)
-			Skills[s_name] = Skill_Set[s_type][s_name]
-		else:
-			unknown_Skills.append('['+s_name+'] '+s_name)
+	def itemChange(self, _tree):
+		testText = self.TreeList[_tree]['EntryText'].get()
+		if(testText and testText.isdigit()):
+			if len(self.MoveNames) < int(testText):
+				name = self.MoveNames[int(testText)]
+				if not name.isdigit():
+					self.setItem(_tree, int(testText))
+		return True
+		
+	def buildTrees(self, window, Height = 4):
+		self.TreeList = {'tree':{'Treeview':None,'EntryText':StringVar(window)},'tree2':{'Treeview':None,'EntryText':StringVar(window)},'tree3':{'Treeview':None,'EntryText':StringVar(window)}}
 
-No_Skills_dec = []
+		sf = Frame(window)
+		cpol = [200,40,450]
+		cpoT = ["Skill List","Slots","Decription"]
+		pos  = 0
+		
 
-for k_name in MoveList:
-	if not k_name in Skills:
-		No_Skills_dec.append(k_name)
+		for tree in self.TreeList:
+			self.TreeList[tree]['Treeview'] = ttk.Treeview(sf, columns=('slotCt','dec',),height=Height) 
+	
+			self.TreeList[tree]['Treeview'].column("#0", width=cpol[0])
+			self.TreeList[tree]['Treeview'].heading('#0', text=cpoT[0])
+			self.TreeList[tree]['Treeview'].column("#1", width=cpol[1])
+			self.TreeList[tree]['Treeview'].heading('#1', text=cpoT[1])
+			self.TreeList[tree]['Treeview'].column("#2",width=cpol[2])
+			self.TreeList[tree]['Treeview'].heading('#2', text=cpoT[2])
+			self.TreeList[tree]['Treeview'].grid( row=pos, column=1, sticky=(W, W, E, S))
+
+			ysb = ttk.Scrollbar(sf, orient='vertical', command=self.TreeList[tree]['Treeview'].yview)
+			ysb.grid(row=pos, column=0, sticky='ns')
+			pos+=1
+		return sf
+
+	def addSkilsToTree(self, tree, maxslot = 3):
+		SkillList = []
+		for s_type in Skill_Set:
+			id = self.TreeList[tree]['Treeview'].insert('', 'end', text=s_type,open=False)
+			temp  = list(Skill_Set[s_type].keys())
+			for s_name in sorted(temp):
+				if s_name in self.MoveList and MoveCodeList[s_name] <= maxslot:	
+					ids = self.TreeList[tree]['Treeview'].insert(id, 'end',  self.MoveNames.index(s_name), text=s_name, values=(MoveCodeList[s_name], Skill_Set[s_type][s_name][0]))
+					SkillList.append(s_name)
+
+		id = self.TreeList[tree]['Treeview'].insert('', 'end', text="Unknown Skills",open=False)
+		for move in self.MoveList:
+			if move not in SkillList and MoveCodeList[move] <= maxslot:
+				self.TreeList[tree]['Treeview'].insert(id, 'end', self.MoveNames.index(move), text=move,  values=(MoveCodeList[move], ""))
+
+		self.TreeList[tree]['Treeview'].bind('<<TreeviewSelect>>', lambda e: self.itemClicked(e,tree))
 
 
-#if(len(unknown_Skills)> 0):
-#	print("\n\nunknown_Skills",unknown_Skills)
-#	print("\n\n")
+	def setItem(self, _tree, id):
+		if(id > 0):
+			parent_iid = self.TreeList[_tree]['Treeview'].parent(id)
+			self.TreeList[_tree]['Treeview'].item(parent_iid, open=True)
+			self.TreeList[_tree]['Treeview'].focus(id)
+			self.TreeList[_tree]['Treeview'].selection_set(id)
+			self.TreeList[_tree]['Treeview'].see(id)
 
-#if(len(No_Skills_dec)>0):
-#	print("\n\nNo_Skills_dec",No_Skills_dec)
-#	print("\n\n")
+	def getID(self,_tree):
+		return self.TreeList[_tree]['Treeview'].focus()
+
+	def canUse(self, moveindex, creddits):
+		if moveindex is '':
+			return (0, creddits)
+		caust = MoveCodeList[self.MoveNames[int(moveindex)]]
+		if creddits >= caust:
+			return (int(moveindex), creddits-caust)
+
+mv = MoveData()
+#mv.setItem(mv.TreeList['tree'],102)
+
+
 
 def OpenCmd():
 	global file, new_item
@@ -124,26 +185,6 @@ def handaleSSB():
 	else:
 		chk_state_learn.set(False)
 
-	Moves['Move 1']['Entry'].set(ssb.ds1['move1'])
-	Moves['Move 2']['Entry'].set(ssb.ds1['move2'])
-	Moves['Move 3']['Entry'].set(ssb.ds1['move3'])
-
-	Moves['Move 1']['Combobox'].set(MoveNames[int(ssb.ds1['move1'])])
-
-	if MoveCodeList[MoveNames[int(ssb.ds1['move1'])]] == 2:
-		Moves['Move 2']['Combobox'].set('')
-		Moves['Move 3']['Combobox'].set(MoveNames[int(ssb.ds1['move3'])])
-
-	elif MoveCodeList[MoveNames[int(ssb.ds1['move1'])]] == 3:
-		Moves['Move 2']['Combobox'].set('')
-		Moves['Move 3']['Combobox'].set('')
-	else:
-		Moves['Move 2']['Combobox'].set(MoveNames[int(ssb.ds1['move2'])])
-		if MoveCodeList[MoveNames[int(ssb.ds1['move2'])]] == 2:
-			Moves['Move 3']['Combobox'].set('')
-		else:
-			Moves['Move 3']['Combobox'].set(MoveNames[int(ssb.ds1['move3'])])
-
 	txt_XP.delete('0', 'end')
 	txt_ATC.delete('0', 'end')
 	txt_HP.delete('0', 'end')
@@ -155,34 +196,22 @@ def handaleSSB():
 	txt_Gift.delete('0', 'end')
 	txt_Gift.insert('0',ssb.ds1['gift'])
 
+	mv.setItem('tree',ssb.ds1['move1'])
+	mv.setItem('tree2',ssb.ds1['move2'])
+	mv.setItem('tree3',ssb.ds1['move3'])
+
+
 def SaveCmd():
 	global ssb
 	ssb.setLearn(chk_state_learn.get())
-	move1 = Moves['Move 1']['Combobox'].get()
-	if move1 is '':
-		move1 = 'No_Move'
-	ssb.setMove1(MoveNames.index(move1))
-	if MoveCodeList[Moves['Move 1']['Combobox'].get()] == 2:
-		ssb.setMove2(0)
-		move3 = Moves['Move 3']['Combobox'].get()
-		if move3 is '':
-			move3 = 'No_Move'
-		ssb.setMove3(MoveNames.index(move3))
-	elif MoveCodeList[Moves['Move 1']['Combobox'].get()] == 3:
-		ssb.setMove2(0)
-		ssb.setMove3(0)
-	else:
-		move2 = Moves['Move 2']['Combobox'].get()
-		if move2 is '':
-			move2 = 'No_Move'
-		ssb.setMove2(MoveNames.index(move2))
-		if MoveCodeList[Moves['Move 1']['Combobox'].get()] == 2:
-			ssb.setMove3(0)
-		else:
-			move3 = Moves['Move 3']['Combobox'].get()
-			if move3 is '':
-				move3 = 'No_Move' 
-			ssb.setMove3(MoveNames.index(move3))
+	slot = 3
+	move1 , slot =  mv.canUse(mv.getID('tree'),slot)
+	move2 , slot =  mv.canUse(mv.getID('tree2'),slot)
+	move3 , slot =  mv.canUse(mv.getID('tree3'),slot)
+
+	ssb.setMove1(move1)
+	ssb.setMove2(move2)
+	ssb.setMove3(move3)
 
 	ssb.setLevel(int(txt_XP.get()))
 	ssb.setAttack(int(txt_ATC.get()))
@@ -293,49 +322,6 @@ def key(event):
 			OpenCmd()
 
 
-def Combobox_Change_1(event):
-	this_move= Moves['Move 1']
-	Combobox_Change(this_move)
-
-def Combobox_Change_2(event):
-	this_move= Moves['Move 2']
-	Combobox_Change(this_move)
-
-def Combobox_Change_3(event):
-	this_move= Moves['Move 3']
-	Combobox_Change(this_move)
-
-def Combobox_Change(this_move):
-	name = this_move['Combobox'].get()
-	if name:
-		this_move['Entry'].set(str(MoveNames.index(name)))
-
-def Entry_Change_1():
-	this_move= Moves['Move 1']
-	Entry_Change(this_move)
-	return True
-
-def Entry_Change_2():
-	this_move= Moves['Move 2']
-	Entry_Change(this_move)
-	return True
-
-def Entry_Change_3():
-	this_move= Moves['Move 3']
-	Entry_Change(this_move)
-	return True
-
-def Entry_Change(this_move):
-	if(this_move['Entry'].get()):
-		e_move = this_move['Entry'].get()
-		print("Entry ",e_move)
-		name = MoveNames[int(e_move)]
-		if name in Skills:
-			this_move['Dec_Label'].set("[ "+Skills[name][3]+" Rank "+str(Skills[name][1])+" ] "+Skills[name][0])
-		else:
-			this_move['Dec_Label'].set('???')
-		this_move['Combobox'].set(name)
-	return True
 def maine():
 	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
 	window = Tk()
@@ -348,7 +334,7 @@ def maine():
 	chk_state_learn.set(False)
 	 
 	window.title("SSBU Amiibo editor")
-	window.geometry('1040x400')
+	window.geometry('1080x400')
 
 	menu = Menu(window)
 	 
@@ -392,69 +378,41 @@ def maine():
 	window.bind("<Key>", key)
 
 	background_label = Label(window)
-	background_label.place(x=0, y=0, relwidth=1, relheight=1)
+	background_label.grid(column=0, row=5)
 
 
 	chk_learn = Checkbutton(window, text='Learning On/Off', var=chk_state_learn)
 	chk_learn.grid(column=0, row=0)
 
-	Moves={'Move 1':{'Combobox':StringVar(menu),
-					'Entry':StringVar(menu),
-					'Dec_Label':StringVar(menu),
-					'Combobox_Change': Combobox_Change_1,
-					'Entry_Change': Entry_Change_1
-					},
-			'Move 2':{'Combobox':StringVar(menu),
-					'Entry':StringVar(menu),
-					'Dec_Label':StringVar(menu),
-					'Combobox_Change': Combobox_Change_2,
-					'Entry_Change': Entry_Change_2
-					},
-			'Move 3':{'Combobox':StringVar(menu),
-					'Entry':StringVar(menu),
-					'Dec_Label':StringVar(menu),
-					'Combobox_Change': Combobox_Change_3,
-					'Entry_Change': Entry_Change_3
-					},
-	}
-	move_row = 1
-	for move in Moves:
-		lbl = Label(window, text=move+": ")
-		lbl.grid(row=move_row, column=0)
 
-		popup = ttk.Combobox(window, textvariable=Moves[move]['Combobox'], values=MoveList)
-		popup.grid(row = move_row, column =1)
-		popup.bind("<<ComboboxSelected>>", Moves[move]['Combobox_Change'])
+	moveFrame = mv.buildTrees(window)
+	moveFrame.grid(column=3, row=1, rowspan = 5)
 
-		ent = Entry(window,width=10, textvariable=Moves[move]['Entry'], validate="focusout", validatecommand=Moves[move]['Entry_Change'])
-		ent.grid(row=move_row,column=2)
-		
-		lbl_dec = Label(window,  textvariable=Moves[move]['Dec_Label'])
-		lbl_dec.grid(row=move_row,column=3)
-		move_row +=1
+	for tree in mv.TreeList:
+		mv.addSkilsToTree(tree)
 
 	lbl_XP = Label(window, text="XP: ")
-	lbl_XP.grid(column=0, row=4)
+	lbl_XP.grid(column=0, row=1)
 	txt_XP = Entry(window,width=15)
-	txt_XP.grid(column=1, row=4)
+	txt_XP.grid(column=1, row=1)
 
 	lbl_ATC = Label(window, text="Attack: ")
-	lbl_ATC.grid(column=0, row=5)
+	lbl_ATC.grid(column=0, row=2)
 	txt_ATC = Entry(window,width=10)
-	txt_ATC.grid(column=1, row=5)
+	txt_ATC.grid(column=1, row=2)
 
 
 	lbl_HP = Label(window, text="Defense: ")
-	lbl_HP.grid(column=0, row=6)
+	lbl_HP.grid(column=0, row=3)
 	txt_HP = Entry(window,width=10)
-	txt_HP.grid(column=1, row=6)
+	txt_HP.grid(column=1, row=3)
 
 
 	lbl_Gift = Label(window, text="Gift: ")
-	lbl_Gift.grid(column=0, row=7)
+	lbl_Gift.grid(column=0, row=4)
 	txt_Gift = Entry(window,width=10)
-	txt_Gift.grid(column=1, row=7)
-	 
+	txt_Gift.grid(column=1, row=4)
+
 	window.mainloop()
 	
 if __name__ == '__main__':
