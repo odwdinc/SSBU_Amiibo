@@ -41,12 +41,10 @@ python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
 ### Run the UI with the command "ssbu_amiibo"
 
 ### New window will load with UI.
-![Run Code](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/RunCode_7.PNG)
-
 
 ### Go into File menu to access "Decrypt amiibo"
-![Run Code](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/RunCode_8.PNG)
 
+![Run Code](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/RunCode_7.PNG)
 
 ## Hex editor usage if installed with pip
 
