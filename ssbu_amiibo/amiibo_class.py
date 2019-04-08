@@ -42,9 +42,7 @@ class ssbu:
 		self.ds1 =0
 		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4')
 		self.DataPatternOffests = {'learn': 2, 'un0': 3, 'move1': 12, 'move2': 13, 'move3': 14, 'un1': 15, 'xp': 106, 'un2': 110, 'atc': 111, 'hp': 113, 'un3': 115, 'gift': 116, 'un4': 118}
-
-
-		self.DataPatern = "<?9sBBB91sI1shh1sH94s"
+		self.DataPatern = "<?9sBBB92sI1shh1sH92s"
 		self.DataOffset = 0x02
 		self.unpackData()
 		self.GetWebData()

@@ -127,7 +127,10 @@ class MoveData:
 			self.TreeList[_tree]['Treeview'].see(id)
 
 	def getID(self,_tree):
-		return self.TreeList[_tree]['Treeview'].focus()
+		if  "I" not in self.TreeList[_tree]['Treeview'].focus():
+			return self.TreeList[_tree]['Treeview'].focus()
+		else:
+			return 0
 
 	def canUse(self, moveindex, creddits):
 		if moveindex is '':
