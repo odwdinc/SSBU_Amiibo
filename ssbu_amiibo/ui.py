@@ -153,9 +153,8 @@ def handaleFile():
 	if(file):
 		new_item.entryconfig(1,state=NORMAL)
 		
-		if(key_file):
-			new_item.entryconfig(3,state=NORMAL)
-			menu.entryconfig("Data", state="normal")
+		new_item.entryconfig(3,state=NORMAL)
+		menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
 
 		img2 = ImageTk.PhotoImage(ssb.img)
@@ -352,19 +351,19 @@ def maine():
 		new_item.add_separator()
 		enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 		drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
-		block_item = Menu(menu, tearoff=0)
-		block_item.add_command(label='Export Full DataBlock',command=ExportDB)
-		for un in range(0,5):
-			block_item.add_command(label='Export Un'+str(un)+'_Block',command=(lambda un: lambda: Export('un'+un))(str(un)))
-		block_item.add_separator()
-		block_item.add_command(label='Import Full DataBlock',command=InportDB)
-		for un in range(0,5):
-			block_item.add_command(label='Import Un'+str(un)+'_Block',command=(lambda un: lambda: Inport('un'+un))(str(un)))
-		block_item.add_separator()
-		
-		block_item.add_command(label='Edit Full DataBlock',command=(lambda: Edit('DB')))
-		for un in range(0,5):
-			block_item.add_command(label='Edit Un'+str(un)+'_Block',command=(lambda un: lambda: Edit('un'+un))(str(un)))
+	block_item = Menu(menu, tearoff=0)
+	block_item.add_command(label='Export Full DataBlock',command=ExportDB)
+	for un in range(0,5):
+		block_item.add_command(label='Export Un'+str(un)+'_Block',command=(lambda un: lambda: Export('un'+un))(str(un)))
+	block_item.add_separator()
+	block_item.add_command(label='Import Full DataBlock',command=InportDB)
+	for un in range(0,5):
+		block_item.add_command(label='Import Un'+str(un)+'_Block',command=(lambda un: lambda: Inport('un'+un))(str(un)))
+	block_item.add_separator()
+	
+	block_item.add_command(label='Edit Full DataBlock',command=(lambda: Edit('DB')))
+	for un in range(0,5):
+		block_item.add_command(label='Edit Un'+str(un)+'_Block',command=(lambda un: lambda: Edit('un'+un))(str(un)))
 		
 
 	new_item.add_separator()	
@@ -372,8 +371,8 @@ def maine():
 
 
 	menu.add_cascade(label='File', menu=new_item)
-	if(key_file):
-		menu.add_cascade(label='Data', menu=block_item , state='disabled')
+	
+	menu.add_cascade(label='Data', menu=block_item , state='disabled')
 	window.config(menu=menu)
 	window.bind("<Key>", key)
 
