@@ -181,7 +181,7 @@ def traningFunc(var):
 
 def handaleSSB():
 
-	#learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift
+	#learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4
 	if(ssb.ds1['learn'] == True):
 		chk_state_learn.set(True)
 	else:

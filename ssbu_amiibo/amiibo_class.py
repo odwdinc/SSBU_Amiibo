@@ -41,20 +41,36 @@ class ssbu:
 		self.ID = bytearray(self.f.read(8))
 		self.ds1 =0
 		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4')
-		self.DataPatternOffests = {'learn': 2, 'un0': 3, 'move1': 12, 'move2': 13, 'move3': 14, 'un1': 15, 'xp': 106, 'un2': 110, 'atc': 111, 'hp': 113, 'un3': 115, 'gift': 116, 'un4': 118}
-		self.DataPatern = "<?9sBBB92sI1shh1sH92s"
+		self.DataPatern = "<?9sBBB93sh2shh1sH92s"
 		self.DataOffset = 0x02
 		self.unpackData()
 		self.GetWebData()
 
-	def calLevel(self, xp):
-		x = xp / 1000000
-		y = int(11.950147 + 0.2657001*x - 0.0004574763*x**2)
-		return y
+	def xpToLev(self,xp):
+		for i in levMap:
+			if i+1 <= len(levMap):
+				if xp >= levMap[i]  and xp < levMap[i+1]:
+					levSpacing = levMap[i+1] - levMap[i]
+					pos = xp - levMap[i]
+					if pos > 0:
+						lev = i + (pos/levSpacing)
+					else:
+						lev = i
+					return (lev)
+		return(50.0)
 
-	def calXP(self,lev):
-		y = 485 - 25.46969*lev + 0.4188126*lev**2
-		return int(y * 1000000)
+	def LevToXp(self,lev):
+		if lev > 50:
+			return levMap[50]
+		else:
+			i = int(lev)
+			pos = lev - i 
+			levSpacing = levMap[i+1] - levMap[i]
+			if pos > 0:
+				pos  = levMap[i] + int( (levSpacing * pos) + (levSpacing % pos > 0))
+			else:
+				pos  = levMap[i]
+			return pos
 
 	def setLearn(self,learn):
 		self.ds1['learn'] = learn
@@ -169,6 +185,58 @@ if __name__ == "__main__":
 	else:
 		pass
 
+
+levMap = {1:0,
+2:8,
+3:22,
+4:41,
+5:63,
+6:90,
+7:120,
+8:155,
+9:195,
+10:238,
+11:284,
+12:330,
+13:376,
+14:426,
+15:476,
+16:528,
+17:580,
+18:632,
+19:684,
+20:737,
+21:790,
+22:843,
+23:896,
+24:950,
+25:1004,
+26:1058,
+27:1112,
+28:1167,
+29:1222,
+30:1277,
+31:1339,
+32:1406,
+33:1478,
+34:1555,
+35:1637,
+36:1724,
+37:1816,
+38:1910,
+39:2012,
+40:2115,
+41:2220,
+42:2329,
+43:2459,
+44:2619,
+45:2799,
+46:2999,
+47:3209,
+48:3429,
+49:3669,
+50:3912
+} 
 
 MoveCodeList = {
 'No_Move':0,
