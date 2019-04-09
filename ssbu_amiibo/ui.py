@@ -198,6 +198,9 @@ def handaleSSB():
 	txt_Gift.delete('0', 'end')
 	txt_Gift.insert('0',ssb.ds1['gift'])
 
+	txt_CL.delete('0', 'end')
+	txt_CL.insert('0',ssb.ds1['color'])
+
 	mv.setItem('tree',ssb.ds1['move1'])
 	mv.setItem('tree2',ssb.ds1['move2'])
 	mv.setItem('tree3',ssb.ds1['move3'])
@@ -220,6 +223,8 @@ def SaveCmd():
 	ssb.setDefense(int(txt_HP.get()))
 
 	ssb.setGift(int(txt_Gift.get()))
+
+	ssb.setColor(int(txt_CL.get()))
 
 	ssb.sign()
 
@@ -325,7 +330,7 @@ def key(event):
 
 
 def maine():
-	global master_keys, window, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
+	global master_keys, window,txt_CL, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
 	window = Tk()
 
 	key_file = Path("./key_retail.bin").is_file()
@@ -354,66 +359,84 @@ def maine():
 		new_item.add_separator()
 		enc_cmd = new_item.add_command(label='Encrypt Amiibo',command=Encrypt,state='disabled')
 		drc_cmd =new_item.add_command(label='Decrypt amiibo',command=Decrypt)
-	block_item = Menu(menu, tearoff=0)
-	block_item.add_command(label='Export Full DataBlock',command=ExportDB)
-	for un in range(0,5):
-		block_item.add_command(label='Export Un'+str(un)+'_Block',command=(lambda un: lambda: Export('un'+un))(str(un)))
-	block_item.add_separator()
-	block_item.add_command(label='Import Full DataBlock',command=InportDB)
-	for un in range(0,5):
-		block_item.add_command(label='Import Un'+str(un)+'_Block',command=(lambda un: lambda: Inport('un'+un))(str(un)))
-	block_item.add_separator()
 	
-	block_item.add_command(label='Edit Full DataBlock',command=(lambda: Edit('DB')))
-	for un in range(0,5):
-		block_item.add_command(label='Edit Un'+str(un)+'_Block',command=(lambda un: lambda: Edit('un'+un))(str(un)))
-		
-
 	new_item.add_separator()	
 	new_item.add_command(label='Exit',command=QuitCmd)
-
-
 	menu.add_cascade(label='File', menu=new_item)
+
+	unMenuCount = 7
+	block_item = Menu(menu, tearoff=0)
+	sub_item = Menu(block_item, tearoff=0)
+
+	sub_item.add_command(label='Export Full DataBlock',command=ExportDB)
+	sub_item.add_command(label='Export Traning DataBlock',command=lambda: Export('train'))
+	sub_item.add_command(label='Export Color DataBlock',command=lambda: Export('color'))
+
 	
+	for un in range(0,unMenuCount):
+		sub_item.add_command(label='Export Un'+str(un)+'_Block',command=(lambda un: lambda: Export('un'+un))(str(un)))
+	block_item.add_cascade(label='Export', menu=sub_item)
+
+	sub_item = Menu(block_item, tearoff=0)
+	sub_item.add_command(label='Import Full DataBlock',command=InportDB)
+	sub_item.add_command(label='Import Traning DataBlock',command=lambda: Inport('train'))
+	sub_item.add_command(label='Import Color DataBlock',command=lambda: Inport('color'))
+
+	for un in range(0,unMenuCount):
+		sub_item.add_command(label='Import Un'+str(un)+'_Block',command=(lambda un: lambda: Inport('un'+un))(str(un)))
+	block_item.add_cascade(label='Import', menu=sub_item)
+
+	sub_item = Menu(block_item, tearoff=0)
+	sub_item.add_command(label='Edit Full DataBlock',command=(lambda: Edit('train')))
+	sub_item.add_command(label='Edit Traning DataBlock',command=lambda: Edit('train'))
+	sub_item.add_command(label='Edit Color DataBlock',command=lambda: Edit('color'))
+
+	for un in range(0,unMenuCount):
+		sub_item.add_command(label='Edit Un'+str(un)+'_Block',command=(lambda un: lambda: Edit('un'+un))(str(un)))
+	block_item.add_cascade(label='Edit', menu=sub_item)
+		
 	menu.add_cascade(label='Data', menu=block_item , state='disabled')
+
 	window.config(menu=menu)
 	window.bind("<Key>", key)
 
 	background_label = Label(window)
-	background_label.grid(column=0, row=5)
-
+	background_label.grid(column=0, row=5,columnspan = 4)
 
 	chk_learn = Checkbutton(window, text='Learning On/Off', var=chk_state_learn)
 	chk_learn.grid(column=0, row=0)
 
 
 	moveFrame = mv.buildTrees(window)
-	moveFrame.grid(column=3, row=1, rowspan = 5)
+	moveFrame.grid(column=4, row=1, rowspan = 5)
 
 	for tree in mv.TreeList:
 		mv.addSkilsToTree(tree)
 
 	lbl_XP = Label(window, text="XP: ")
 	lbl_XP.grid(column=0, row=1)
-	txt_XP = Entry(window,width=15)
+	txt_XP = Entry(window)
 	txt_XP.grid(column=1, row=1)
 
 	lbl_ATC = Label(window, text="Attack: ")
-	lbl_ATC.grid(column=0, row=2)
-	txt_ATC = Entry(window,width=10)
-	txt_ATC.grid(column=1, row=2)
-
+	lbl_ATC.grid(column=2, row=1)
+	txt_ATC = Entry(window)
+	txt_ATC.grid(column=3, row=1)
 
 	lbl_HP = Label(window, text="Defense: ")
-	lbl_HP.grid(column=0, row=3)
-	txt_HP = Entry(window,width=10)
-	txt_HP.grid(column=1, row=3)
-
+	lbl_HP.grid(column=0, row=2)
+	txt_HP = Entry(window)
+	txt_HP.grid(column=1, row=2)
 
 	lbl_Gift = Label(window, text="Gift: ")
-	lbl_Gift.grid(column=0, row=4)
-	txt_Gift = Entry(window,width=10)
-	txt_Gift.grid(column=1, row=4)
+	lbl_Gift.grid(column=2, row=2)
+	txt_Gift = Entry(window)
+	txt_Gift.grid(column=3, row=2)
+
+	lbl_CL = Label(window, text="Color: ")
+	lbl_CL.grid(column=0, row=3)
+	txt_CL = Entry(window)
+	txt_CL.grid(column=1, row=3)
 
 	window.mainloop()
 	

@@ -40,8 +40,8 @@ class ssbu:
 		self.f.seek(0x1DC, 0x0)
 		self.ID = bytearray(self.f.read(8))
 		self.ds1 =0
-		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4')
-		self.DataPatern = "<?9sBBB93sh2shh1sH92s"
+		self.ds = namedtuple('ds', 'learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4 train color un5 un6')
+		self.DataPatern = "<?9sBBB93sh2shh1sH17s59sB4s12s"
 		self.DataOffset = 0x02
 		self.unpackData()
 		self.GetWebData()
@@ -105,6 +105,8 @@ class ssbu:
 	def setGift(self,Gift):
 		self.ds1['gift'] = Gift
 
+	def setColor(self,Color):
+		self.ds1['color'] = Color
 	
 	def GetWebData(self):
 		self.webdata =  None
