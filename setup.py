@@ -2,6 +2,7 @@ import ast
 from io import open
 from setuptools import find_packages, setup
 
+import os
 with open('ssbu_amiibo/version.py', 'r') as f:
     for line in f:
         if line.startswith('VERSION'):
@@ -10,6 +11,10 @@ with open('ssbu_amiibo/version.py', 'r') as f:
 
 with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
+
+
+os.system('pip install --user git+https://github.com/odwdinc/pyamiibo@master')
+
 
 setup(
     name='ssbu_amiibo',
@@ -28,7 +33,7 @@ setup(
     ],
 
     install_requires=[
-      'pyamiibo @ git+ssh://github.com/odwdinc/pyamiibo@master',
+      'pyamiibo,',
       'cryptography',
       'Pillow',
       'requests'
