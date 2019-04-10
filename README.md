@@ -22,14 +22,6 @@ you will need to porvide your own Amiibo Keys in key_retail.bin for Encription a
 ![Install Python](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/Install_Python_4.PNG)
 
 
-# Install with pip
-
-install to your users home directory.
-
-```console
-python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
-```
-
 # Run the Code
 
 ### Find copy of "KEY RETAIL MUST HAVE TO FLASH AMIIBO.zip" or other copy of "key_retail.bin"
@@ -38,7 +30,21 @@ python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
 
 ### While holding down ctrl+shift right click in the Amiibo folder to get acces to the "Open PowerShell window here"
 
-### Run the UI with the command "ssbu_amiibo"
+# Install with pip
+
+install to your users home directory.
+
+```console
+python -m pip install --user git+https://github.com/odwdinc/SSBU_Amiibo.git
+```
+
+
+### Run the UI with the command 
+
+```console
+$env:Path += "$env:APPDATA\Python\Python37\Scripts;"
+ssbu_amiibo.exe
+```
 
 ### New window will load with UI.
 
