@@ -21,6 +21,10 @@ you will need to porvide your own Amiibo Keys in key_retail.bin for Encription a
 ### Conferm "Install for all users"
 ![Install Python](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/Install_Python_4.PNG)
 
+## Download and Install Git
+
+### https://git-scm.com/download/win
+
 
 # Run the Code
 
