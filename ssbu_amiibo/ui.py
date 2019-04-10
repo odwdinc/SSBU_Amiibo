@@ -180,8 +180,6 @@ def traningFunc(var):
 	 messagebox.showinfo(var[0],var[1])
 
 def handaleSSB():
-
-	#learn un0 move1 move2 move3 un1 xp un2 atc hp un3 gift un4
 	if(ssb.ds1['learn'] == True):
 		chk_state_learn.set(True)
 	else:
@@ -364,7 +362,7 @@ def maine():
 	new_item.add_command(label='Exit',command=QuitCmd)
 	menu.add_cascade(label='File', menu=new_item)
 
-	unMenuCount = 7
+	unMenuCount = 6
 	block_item = Menu(menu, tearoff=0)
 	sub_item = Menu(block_item, tearoff=0)
 
