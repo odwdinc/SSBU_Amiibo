@@ -28,7 +28,7 @@ setup(
     ],
 
     install_requires=[
-      'pyamiibo @ git+ssh://git@github.com/odwdinc/pyamiibo@master'
+      'pyamiibo @ git+ssh://git@github.com/odwdinc/pyamiibo@master',
       'cryptography',
       'Pillow',
       'requests'
