@@ -33,7 +33,7 @@ setup(
     ],
 
     install_requires=[
-      'pyamiibo,',
+      'pyamiibo',
       'cryptography',
       'Pillow',
       'requests'
