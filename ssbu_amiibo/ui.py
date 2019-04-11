@@ -18,6 +18,7 @@ from ssbu_amiibo.hex import HexWindow
 from ssbu_amiibo.trainingData import training, knowLocations
 from PIL import ImageTk
 
+from tkinter import messagebox
 
 file = None
 ssb = None
