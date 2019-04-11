@@ -55,7 +55,6 @@ class MoveData:
 	def __init__(self):
 		self.MoveNames = list(MoveCodeList.keys())
 		self.MoveList =[k for k in MoveCodeList if not k.isdigit() and MoveCodeList[k] > 0]
-		self.idList = []
 
 	def itemClicked(self, event, _tree):
 		ID = self.TreeList[_tree]['Treeview'].focus()
@@ -78,7 +77,9 @@ class MoveData:
 		return True
 		
 	def buildTrees(self, window, Height = 4):
-		self.TreeList = {'tree':{'Treeview':None,'EntryText':StringVar(window)},'tree2':{'Treeview':None,'EntryText':StringVar(window)},'tree3':{'Treeview':None,'EntryText':StringVar(window)}}
+		self.TreeList = {'tree':{'Treeview':None,'EntryText':StringVar(window),'idlist':[]},\
+						'tree2':{'Treeview':None,'EntryText':StringVar(window),'idlist':[]},\
+						'tree3':{'Treeview':None,'EntryText':StringVar(window),'idlist':[]}}
 
 		sf = Frame(window)
 		cpol = [200,40,450]
@@ -107,7 +108,7 @@ class MoveData:
 		SkillList = []
 		for s_type in Skill_Set:
 			id = self.TreeList[tree]['Treeview'].insert('', 'end', text=s_type,open=False)
-			self.idList.append(id)
+			self.TreeList[tree]['idlist'].append(id)
 			temp  = list(Skill_Set[s_type].keys())
 			for s_name in sorted(temp):
 				if s_name in self.MoveList and MoveCodeList[s_name] <= maxslot:	
@@ -130,8 +131,9 @@ class MoveData:
 			self.TreeList[_tree]['Treeview'].selection_set(id)
 			self.TreeList[_tree]['Treeview'].see(id)
 		else:
-			for node in self.idList:
+			for node in self.TreeList[_tree]['idlist']:
 				self.TreeList[_tree]['Treeview'].item(node, open = False)
+
 
 	def getID(self,_tree):
 		if  "I" not in self.TreeList[_tree]['Treeview'].focus():
