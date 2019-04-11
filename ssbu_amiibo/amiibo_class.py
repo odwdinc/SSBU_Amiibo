@@ -523,7 +523,7 @@ MoveCodeList = {
 '254':0
 			}
 
-
+#@https://www.ssbwiki.com/spirit
 Attack_Skills = {
 	"Fist Attack ↑":["Slightly increases the power of punches and elbow strikes.",1,1],
 	"Foot Attack ↑":["Slightly increases the power of kicks and knee strikes.",1,1],
@@ -703,6 +703,7 @@ Skill_Set = {
 'Attack':Attack_Skills,
 'Defense':Defense_Skills,
 'Recovery':Recovery_Skills,
+'Mobility':Mobility_Skills,
 'Item':Item_Skills,
 'Hazard':Hazard_Skills,
 'Other':Other_Skills,
