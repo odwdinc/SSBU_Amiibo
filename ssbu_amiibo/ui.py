@@ -54,6 +54,7 @@ class MoveData:
 	def __init__(self):
 		self.MoveNames = list(MoveCodeList.keys())
 		self.MoveList =[k for k in MoveCodeList if not k.isdigit() and MoveCodeList[k] > 0]
+		self.idList = []
 
 	def itemClicked(self, event, _tree):
 		ID = self.TreeList[_tree]['Treeview'].focus()
@@ -98,12 +99,14 @@ class MoveData:
 			ysb = ttk.Scrollbar(sf, orient='vertical', command=self.TreeList[tree]['Treeview'].yview)
 			ysb.grid(row=pos, column=0, sticky='ns')
 			pos+=1
+
 		return sf
 
 	def addSkilsToTree(self, tree, maxslot = 3):
 		SkillList = []
 		for s_type in Skill_Set:
 			id = self.TreeList[tree]['Treeview'].insert('', 'end', text=s_type,open=False)
+			self.idList.append(id)
 			temp  = list(Skill_Set[s_type].keys())
 			for s_name in sorted(temp):
 				if s_name in self.MoveList and MoveCodeList[s_name] <= maxslot:	
@@ -125,6 +128,9 @@ class MoveData:
 			self.TreeList[_tree]['Treeview'].focus(id)
 			self.TreeList[_tree]['Treeview'].selection_set(id)
 			self.TreeList[_tree]['Treeview'].see(id)
+		else:
+			for node in self.idList:
+				self.TreeList[_tree]['Treeview'].item(node, open = False)
 
 	def getID(self,_tree):
 		if  "I" not in self.TreeList[_tree]['Treeview'].focus():
@@ -138,7 +144,7 @@ class MoveData:
 		caust = MoveCodeList[self.MoveNames[int(moveindex)]]
 		if creddits >= caust:
 			return (int(moveindex), creddits-caust)
-
+		return(0,creddits)
 mv = MoveData()
 #mv.setItem(mv.TreeList['tree'],102)
 
@@ -150,13 +156,13 @@ def OpenCmd():
 		file.close()
 	file = filedialog.askopenfile(mode='rb+', filetypes = (("Amiibo Decripted","*.bind"),("Amiibo Decripted","*.bind")))
 	handaleFile()
-from tkinter import messagebox
+
 def handaleFile():
 	global ssb, menu, background_label, trainData , window ,traningMenu
 	if(file):
 		new_item.entryconfig(1,state=NORMAL)
-		
-		new_item.entryconfig(3,state=NORMAL)
+		new_item.entryconfig(2,state=NORMAL)
+		new_item.entryconfig(4,state=NORMAL)
 		menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
 
@@ -226,10 +232,26 @@ def SaveCmd():
 
 	ssb.sign()
 
+def SaveASCmd():
+	global file,ssb
+	fName = filedialog.asksaveasfilename(defaultextension=".bind", filetypes = (("Amiibo Decripted","*.bind"),("Amiibo Decripted","*.bind")))
+	if fName :
+		curentfile = file.name
+		file.close()
+		with open(curentfile, 'rb') as fp:
+			data = fp.read()
+
+			with open(fName, 'wb') as fp:
+				fp.write(data)
+		file = open(fName, "rb+")
+		ssb = ssbu(file)
+		SaveCmd()
+		handaleFile()
+
 def Encrypt():
 	global file
 
-	fName = filedialog.asksaveasfilename(filetypes = (("Amiibo","*.bin"),("Amiibo","*.bin")))
+	fName = filedialog.asksaveasfilename(defaultextension=".bin",filetypes = (("Amiibo","*.bin"),("Amiibo","*.bin")))
 	if fName :
 		SaveCmd()
 		curentfile = file.name
@@ -328,7 +350,7 @@ def key(event):
 
 
 def maine():
-	global master_keys, window,txt_CL, new_item, sv_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
+	global master_keys, window,txt_CL, new_item, sv_cmd,sva_cmd, menu, chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift, key_file, background_label, menu
 	window = Tk()
 
 	key_file = Path("./key_retail.bin").is_file()
@@ -348,6 +370,8 @@ def maine():
 	new_item.add_command(label='Open',command=OpenCmd)
 	 
 	sv_cmd = new_item.add_command(label='Save',command=SaveCmd,state='disabled')
+	sva_cmd = new_item.add_command(label='Save As...',command=SaveASCmd,state='disabled')
+	
 
 	if (key_file):
 		with open('./key_retail.bin', 'rb') as fp_d:
