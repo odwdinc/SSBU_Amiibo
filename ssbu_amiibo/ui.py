@@ -211,6 +211,7 @@ def handaleSSB():
 	mv.setItem('tree3',ssb.ds1['move3'])
 
 
+
 def SaveCmd():
 	global ssb
 	ssb.setLearn(chk_state_learn.get())
@@ -232,6 +233,7 @@ def SaveCmd():
 	ssb.setColor(int(txt_CL.get()))
 
 	ssb.sign()
+	handaleFile()
 
 def SaveASCmd():
 	global file,ssb
