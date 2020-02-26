@@ -359,7 +359,7 @@ MoveCodeList = {
 'Battering Items ↑':1,
 'Shooting Items ↑':1,
 'Thrown Items ↑':1,
-'KOs Heal Damage':1,
+'KOs Heal Damage':2,
 'Invincibility after Eating':2,
 'Stats ↑ after Eating':1,
 '107':1,
