@@ -168,21 +168,25 @@ def handaleFile():
 		new_item.entryconfig(4,state=NORMAL)
 		menu.entryconfig("Data", state="normal")
 		ssb = ssbu(file)
-
-		img2 = ImageTk.PhotoImage(ssb.img)
-		background_label.configure(image=img2)
-		background_label.image = img2
-		window.title("SSBU Amiibo editor " + ssb.webdata['amiibo']['name'])
 		menu.delete(3)
-		for train in training:
-			if training[train]['head'] == ssb.webdata['amiibo']['head']:
-				print(train)
-				trainData = training[train]
-				items = Menu(menu, tearoff=0)
-				for move in trainData['data']:
-					print("	"+move[0])
-					items.add_command(label=move[0], command=(lambda move: lambda: traningFunc(move))(move))
-				menu.add_cascade(label='Traning', menu= items)
+		if ssb.webdata:
+			img2 = ImageTk.PhotoImage(ssb.img)
+			background_label.configure(image=img2)
+			background_label.image = img2
+			window.title("SSBU Amiibo editor " + ssb.webdata['amiibo']['name'])
+			
+			for train in training:
+				if training[train]['head'] == ssb.webdata['amiibo']['head']:
+					print(train)
+					trainData = training[train]
+					items = Menu(menu, tearoff=0)
+					for move in trainData['data']:
+						print("	"+move[0])
+						items.add_command(label=move[0], command=(lambda move: lambda: traningFunc(move))(move))
+					menu.add_cascade(label='Traning', menu= items)
+		else:
+			window.title("SSBU Amiibo editor [" + ssb.ID+ "]")
+
 		handaleSSB()
 
 def traningFunc(var):

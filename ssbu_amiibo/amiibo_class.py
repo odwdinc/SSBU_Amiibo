@@ -113,9 +113,13 @@ class ssbu:
 		self.img = None
 		self.ID = ''.join(format(x, '02x') for x in self.ID)
 		req = urllib.request.Request('https://www.amiiboapi.com/api/amiibo/?id='+self.ID)
-		with urllib.request.urlopen(req) as response:
-			result = json.loads(response.readline().decode("utf-8"))
-			self.webdata = result
+		try:
+			with urllib.request.urlopen(req) as response:
+				result = json.loads(response.readline().decode("utf-8"))
+				self.webdata = result
+		except urllib.error.HTTPError as e:
+			print("Not Found : https://www.amiiboapi.com/api/amiibo/?id="+ self.ID)
+		
 		if self.webdata and 'amiibo' in self.webdata:
 			response = requests.get(self.webdata['amiibo']['image'])
 			self.img = Image.open(BytesIO(response.content))
