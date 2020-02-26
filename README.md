@@ -3,10 +3,23 @@ Just a start for the Amiibo editor
 
 you will need to porvide your own Amiibo Keys in key_retail.bin for Encription and Decription to work
 
+Each Amiibo has to be "upgraded" from the SSB format to SSBU, you should see this message in game the first time you scan a fresh Amiibo in SSBU. After the upgraded the tag is marked and the data block is reformatted to the new SSBU preserving some of the SSB data just reformatted, scaled, etc. If the Amiibo has SSBU data in the data block before the upgraded this data will be interpreted as SSB data not SSBU data.
 
-# Windows install Guide
+# How To
+  * You will need at least 2 tags (Tagmo) or somthing like the N2 Elite. One will need to be have a stock no mods Amiibo.
+  * This will then be upgraged in game by SSBU.
+  * After the upgraged by SSBU the bin file is read form the Amiibo.
+  * This upgraged bin file then can be decrepcted by SSBU_Amiibo
+  * Apply any mods and **save** befor encrypting back to a bin fie.
+  * Write the new bin file to a new tag (Tagmo) or back to the N2.
+  
 
-## Get python 3.6 [Link](https://www.python.org/downloads/)
+# Windows 10 64 bit
+  Grab the [Release](https://github.com/odwdinc/SSBU_Amiibo/releases)
+
+# Windows build Guide
+
+## Get python 3.? [Link](https://www.python.org/downloads/)
 ![Get Python](https://github.com/odwdinc/SSBU_Amiibo/blob/master/docs/Install_Python.PNG)
 
 
