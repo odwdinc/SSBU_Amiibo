@@ -115,7 +115,7 @@ class ssbu:
 		req = urllib.request.Request('https://www.amiiboapi.com/api/amiibo/?id='+self.ID)
 		try:
 			with urllib.request.urlopen(req) as response:
-				result = json.loads(response.readline().decode("utf-8"))
+				result = json.loads(response.read().decode("utf-8"))
 				self.webdata = result
 		except urllib.error.HTTPError as e:
 			print("Not Found : https://www.amiiboapi.com/api/amiibo/?id="+ self.ID)
