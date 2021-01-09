@@ -1,0 +1,4 @@
+git+https://github.com/odwdinc/pyamiibo@master#egg=pyamiibo
+cryptography
+Pillow
+requests
