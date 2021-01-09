@@ -11,6 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
     - name: PyInstaller Windows
       uses: JackMcKew/pyinstaller-action-windows@main
       with:
