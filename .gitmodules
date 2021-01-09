@@ -1,3 +1,3 @@
-[submodule "pyamiibo"]
-	path = pyamiibo
-	url = git@github.com:odwdinc/pyamiibo.git
+[submodule "src/pyamiibo"]
+	path = src/pyamiibo
+	url = https://github.com/odwdinc/pyamiibo

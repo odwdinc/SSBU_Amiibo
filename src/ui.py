@@ -11,7 +11,7 @@ from ssbu_amiibo.amiibo_class import MoveCodeList
 from ssbu_amiibo.amiibo_class import Skill_Set
 
 
-from amiibo import AmiiboDump, AmiiboMasterKey
+from pyamiibo.amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
 from ssbu_amiibo.hex import HexWindow
@@ -154,7 +154,7 @@ class MoveData:
 			return 0
 
 	def canUse(self, moveindex, creddits):
-		if moveindex is '':
+		if moveindex == '':
 			return (0, creddits)
 		caust = MoveCodeList[self.MoveNames[int(moveindex)]]
 		if creddits >= caust:
@@ -419,9 +419,9 @@ def key(event):
 
 
 def maine():
-	global master_keys, window, txt_CL, new_item, sv_cmd, sva_cmd, menu,
-	chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift,
-	key_file, background_label, menu
+	global master_keys, window, txt_CL, new_item, sv_cmd, sva_cmd, menu
+	global chk_state_learn, chk_learn, Moves, txt_XP, txt_ATC, txt_HP, txt_Gift
+	global key_file, background_label, menu
 
 	window = Tk()
 
