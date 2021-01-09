@@ -1,21 +1,21 @@
-#!/usr/bin/env python3
-
 from tkinter import *
 from tkinter import filedialog
 from tkinter import scrolledtext
 from tkinter import Menu
 from tkinter import ttk
 
-from amiibo_class import ssbu
-from amiibo_class import MoveCodeList
-from amiibo_class import Skill_Set
-
-
-from pyamiibo.amiibo import AmiiboDump, AmiiboMasterKey
 from pathlib import Path
 
-from hex import HexWindow
-from trainingData import training, knowLocations
+from ssbu_amiibo.amiibo_class import ssbu
+from ssbu_amiibo.amiibo_class import MoveCodeList
+from ssbu_amiibo.amiibo_class import Skill_Set
+
+from pyamiibo.amiibo import AmiiboDump, AmiiboMasterKey
+
+from ssbu_amiibo.hex import HexWindow
+from ssbu_amiibo.trainingData import training, knowLocations
+
+
 from PIL import ImageTk
 
 from tkinter import messagebox
