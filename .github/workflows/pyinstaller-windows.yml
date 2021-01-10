@@ -16,11 +16,12 @@ jobs:
       with:
         path: src
         spec: ui.spec
-
+    - name: Zip structure files
+      run: zip -r ssbu_amiibo.zip src/dist/windows/ui
     - uses: actions/upload-artifact@v2
       with:
         name: ssbu_amiibo
-        path: src/dist/windows # or path/to/artifact
+        path: ssbu_amiibo.zip # or path/to/artifact
 
   release:
     name: Create Release
@@ -31,10 +32,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ssbu_amiibo
-
-      - name: Display structure of downloaded files
-        run: ls -R
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
