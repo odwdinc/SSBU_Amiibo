@@ -3,7 +3,7 @@ from io import open
 from setuptools import find_packages, setup
 
 import os
-with open('ssbu_amiibo/version.py', 'r') as f:
+with open('src/version.py', 'r') as f:
     for line in f:
         if line.startswith('VERSION'):
             version = ast.literal_eval(line.strip().split('=')[-1].strip())
@@ -56,8 +56,8 @@ setup(
     packages=find_packages(),
     entry_points={
         'gui_scripts': [
-            'pyhex = ssbu_amiibo.hex:maine',
-            'ssbu_amiibo = ssbu_amiibo.ui:maine'
+            'pyhex = src.hex:maine',
+            'ssbu_amiibo = src.ui:maine'
         ],
     },
 )

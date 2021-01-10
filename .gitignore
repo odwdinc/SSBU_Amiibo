@@ -4,3 +4,5 @@ retail.key
 *.egg-info/
 ssbu_amiibo/key_retail.bin
 key_retail.bin
+src/build/*
+src/dist/*
